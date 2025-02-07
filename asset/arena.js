@@ -4,12 +4,8 @@ let markdownIt = document.createElement('script')
 markdownIt.src = 'https://cdn.jsdelivr.net/npm/markdown-it@14.0.0/dist/markdown-it.min.js'
 document.head.appendChild(markdownIt)
 
-
-
 // Okay, Are.na stuff!
 let channelSlug = 'the-art-and-function-of-maps' // The “slug” is just the end of the URL
-
-
 
 // First, let’s lay out some *functions*, starting with our basic metadata:
 let placeChannelInfo = (data) => {
@@ -34,30 +30,29 @@ let renderBlock = (block) => {
 	let channelBlocks = document.querySelector('#channel-blocks')
 
 	// Links!
-	if (block.class == 'Link') {
-		let linkItem =
-			`
-			<li>
-				<p><em>Link</em></p>
-				<picture>
-					<source media="(max-width: 428px)" srcset="${ block.image.thumb.url }">
-					<source media="(max-width: 640px)" srcset="${ block.image.large.url }">
-					<img src="${ block.image.original.url }">
-				</picture>
-				<h3>${ block.title }</h3>
-				${ block.description_html }
-				<p><a href="${ block.source.url }">See the original →</a></p>
-			</li>
-			`
-		channelBlocks.insertAdjacentHTML('beforeend', linkItem)
-	}
+if (block.class == 'Link') {
+    let linkItem =
+        `
+        <li class="link-block">
+            <p><em>Link</em></p>
+            <picture>
+                <source media="(max-width: 428px)" srcset="${ block.image.thumb.url }">
+                <source media="(max-width: 640px)" srcset="${ block.image.large.url }">
+                <img src="${ block.image.original.url }">
+            </picture>
+            <h3>${ block.title }</h3>
+            ${ block.description_html }
+            <p><a href="${ block.source.url }">See the original →</a></p>
+        </li>
+        `;
+    channelBlocks.insertAdjacentHTML('beforeend', linkItem);
+    }
 
 	// Images!
 	else if (block.class == 'Image') {
 		let imageItem =
 			`
 			<li class="block-item image-block">
-				<p><em>Image</em></p>
 				<img src="${ block.image.original.url }" alt="${ block.title }">
 				<h3>${ block.title }</h3>
 				${ block.description_html }
@@ -82,7 +77,6 @@ let renderBlock = (block) => {
 		let pdfItem =
 			`
 			<li>
-				<p><em>PDF</em></p>
 				<embed src="${ block.attachment.url }" type="application/pdf" width="600" height="400">
 				<p><a href="${ block.attachment.url }" target="_blank">Download PDF →</a></p>
 			</li>
@@ -95,7 +89,6 @@ let renderBlock = (block) => {
 		let audioEmbedItem =
 			`
 			<li>
-				<p><em>Linked Audio</em></p>
 				${ block.embed.html }
 			</li>
 			`
