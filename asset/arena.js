@@ -33,16 +33,13 @@ let renderBlock = (block) => {
 if (block.class == 'Link') {
     let linkItem =
         `
-        <li class="link-block">
-            <p><em>Link</em></p>
-            <picture>
-                <source media="(max-width: 428px)" srcset="${ block.image.thumb.url }">
-                <source media="(max-width: 640px)" srcset="${ block.image.large.url }">
-                <img src="${ block.image.original.url }">
-            </picture>
-            <h3>${ block.title }</h3>
-            ${ block.description_html }
-            <p><a href="${ block.source.url }">See the original →</a></p>
+       <li class="block-item image-block">
+				<img src="${ block.image.original.url }" alt="${ block.title }">
+            <div class="overlay">
+                <p>${block.title}</p>
+			<p>${block.description}</p>
+            </div>
+            <p><a href="${ block.source.url }">See the original ↗</a></p>
         </li>
         `;
     channelBlocks.insertAdjacentHTML('beforeend', linkItem);
@@ -54,8 +51,10 @@ if (block.class == 'Link') {
 			`
 			<li class="block-item image-block">
 				<img src="${ block.image.original.url }" alt="${ block.title }">
-				<h3>${ block.title }</h3>
-				${ block.description_html }
+                <div class="overlay">
+                <p>${block.title}</p>
+			<p>${block.description}</p>
+                 </div>
 			</li>
 			`
 		channelBlocks.insertAdjacentHTML('beforeend', imageItem)
@@ -96,6 +95,24 @@ if (block.class == 'Link') {
 	}
 }
 
+function toggleCell(row, col) {
+	let cell = cells[row][col]; //create cell
+	let currentColor = cell.style.backgroundColor; //create current color 
+
+	if (currentColor === "black") {
+	  cell.style.backgroundColor = "white";
+	} else if (currentColor === "white") {
+	  cell.style.backgroundColor = "black";
+	}
+  
+	count[row][col]++; // increase toggle count by 1;
+  
+	// if count is more than the threshold set earlier, become transparent
+	if (count[row][col] >= threshold) {
+	  cell.style.backgroundColor = "transparent";
+	}
+	console.log("togglecell worked")
+  }
 
 
 // It‘s always good to credit your work:
