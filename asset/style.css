@@ -1,13 +1,22 @@
 /* Default Style */
 body {
     font-family: Arial, Helvetica, "Liberation Sans", FreeSans, sans-serif;
-    background-color: #000000;
     color: rgb(255, 255, 255);
     margin: 0;
     padding: 0;
     border-width: 0;
     /* overflow: hidden; */
     /*  cursor: pointer; */
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); 
+    z-index: 0; /* Make the background layer lower than the Canvas */
   }
 
 
