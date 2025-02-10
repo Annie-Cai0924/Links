@@ -23,6 +23,18 @@ let placeChannelInfo = (data) => {
 }
 
 
+// Function to ensure category container exists
+function ensureCategoryContainer(categoryId) {
+    let container = document.querySelector(`#${categoryId}`);
+    if (!container) {
+        container = document.createElement('ul');
+        container.id = categoryId;
+        container.classList.add('block-category');
+        document.querySelector('#channel-blocks').appendChild(container);
+    }
+    return container;
+}
+
 
 // Then our big function for specific-block-type rendering:
 let renderBlock = (block) => {
@@ -417,70 +429,78 @@ canv.style.zIndex = "-1"; // Make Canvas lower than text but higher than body::b
 
 
 
-	// Links!
-if (block.class == 'Link') {
-    let linkItem =
-        `
-       <li class="block-item image-block">
-				<img src="${ block.image.original.url }" alt="${ block.title }">
-            <div class="overlay">
-                <p>${block.title}</p>
-			<p>${block.description}</p>
-            </div>
+
+
+let categoryId;
+let blockItem = '';
+
+	// ======================= Links! ======================
+if (block.class === 'Link') {
+    categoryId = 'links';
+    blockItem = `
+        <li class="block-item image-block">
+ 				<img src="${ block.image.original.url }" alt="${ block.title }">
+             <div class="overlay">
+                 <p>${block.title}</p>
+ 			<p>${block.description}</p>
+             </div>
             <p><a href="${ block.source.url }">See the original ↗</a></p>
-        </li>
-        `;
-    channelBlocks.insertAdjacentHTML('beforeend', linkItem);
-    }
+         </li>`;
 
-	// Images!
-	else if (block.class == 'Image') {
-		let imageItem =
-			`
-			<li class="block-item image-block">
-				<img src="${ block.image.original.url }" alt="${ block.title }">
-                <div class="overlay">
+
+
+
+
+         
+// ======================= Images! ======================
+} else if (block.class === 'Image') {
+    categoryId = 'images';
+    blockItem = `
+        <li class="block-item image-block">
+ 				<img src="${ block.image.original.url }" alt="${ block.title }">
+                 <div class="overlay">
                 <p>${block.title}</p>
-			<p>${block.description}</p>
-                 </div>
-			</li>
-			`
-		channelBlocks.insertAdjacentHTML('beforeend', imageItem)
-	}
+ 			<p>${block.description}</p>
+                  </div>
+ 			</li>`;
 
-	// Text!
-	else if (block.class == 'Text') {
-		let textItem =
-			`
-			<li>
-				<blockquote>${ block.content }</blockquote>
-			</li>
-			`
-		channelBlocks.insertAdjacentHTML('beforeend', textItem)
-	}
 
-	// Uploaded PDFs!
-	else if (block.attachment && block.attachment.content_type.includes('pdf')) {
-		let pdfItem =
-			`
-			<li>
-				<embed src="${ block.attachment.url }" type="application/pdf" width="600" height="400">
-				<p><a href="${ block.attachment.url }" target="_blank">Download PDF →</a></p>
-			</li>
-			`
-		channelBlocks.insertAdjacentHTML('beforeend', pdfItem)
-	}
 
-	// Linked audio!
-	else if (block.embed && block.embed.type.includes('rich')) {
-		let audioEmbedItem =
-			`
-			<li>
-				${ block.embed.html }
-			</li>
-			`
-		channelBlocks.insertAdjacentHTML('beforeend', audioEmbedItem)
-	}
+
+
+// ======================= PDFs! ======================
+} else if (block.attachment && block.attachment.content_type.includes('pdf')) {
+    categoryId = 'pdfs';
+    blockItem = `
+        <li>
+ 				<embed src="${ block.attachment.url }" type="application/pdf" width="600" height="400">
+ 				<p><a href="${ block.attachment.url }" target="_blank">Download PDF →</a></p>
+ 			</li>`;
+
+
+
+
+// ======================= Audios! ======================
+} else if (block.embed && block.embed.type.includes('rich')) {
+    categoryId = 'audios';
+    blockItem = ` <li>
+ 			${ block.embed.html } </li>`;
+
+
+
+
+  // ======================= Texts! ======================
+} else if (block.class == 'Text') {
+    categoryId = 'text'
+    blockItem = `<li>
+    				<blockquote>${ block.content }</blockquote>
+     			</li>`
+}
+
+if (categoryId) {
+    let container = ensureCategoryContainer(categoryId);
+    container.insertAdjacentHTML('beforeend', blockItem);
+}
 }
 
 function toggleCell(row, col) {
@@ -501,6 +521,13 @@ function toggleCell(row, col) {
 	}
 	console.log("togglecell worked")
   }
+
+
+
+
+
+
+
 
 
 // It‘s always good to credit your work:
@@ -536,3 +563,14 @@ fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-stor
 		data.collaborators.forEach((collaborator) => renderUser(collaborator, channelUsers))
 		renderUser(data.user, channelUsers)
 	})
+
+document.querySelectorAll(".navbar a").forEach(link => {
+    link.addEventListener("click", function(event) {
+        event.preventDefault(); // 阻止默认跳转
+        let targetId = this.getAttribute("href");
+        let targetElement = document.querySelector(targetId);
+        if (targetElement) {
+            targetElement.scrollIntoView({ behavior: "smooth" });
+        }
+    });
+});
