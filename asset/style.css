@@ -1,10 +1,14 @@
 /* Default Style */
 body {
+    font-family: Arial, Helvetica, "Liberation Sans", FreeSans, sans-serif;
     background-color: #000000;
-    color: #ffffff;
-    text-align: center;
-    padding: 20px;
-}
+    color: rgb(255, 255, 255);
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    /* overflow: hidden; */
+    /*  cursor: pointer; */
+  }
 
 
 h1 {
