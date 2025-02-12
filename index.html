@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Links</title>
     <body>
-        <div class="navbar">
+        <div class="navbar" style="display: none;">
             <a href="#images">Images</a>
             <a href="#links">Links</a>
             <a href="#pdfs">PDFs</a>
@@ -20,23 +20,26 @@
         </div>
     
         <div class="content">
-            <!-- <h1 id="channel-title"></h1> -->
             <h1>The Art and Function of</h1>
-
-            <!-- https://codepen.io/josetxu/pen/JoPzNGv -->
-        <div class="content">
-            <div class="letter-m"></div>
-            <div class="letter-a"></div>
-            <div class="letter-p"></div>
-            <div class="letter-s"></div>
-        </div>
-
+            <div class="contentmap">
+                <div class="letter-m"></div>
+                <div class="letter-a"></div>
+                <div class="letter-p"></div>
+                <div class="letter-s"></div>
+            </div>
+            <div class="links">
+                <div class="l">Yaxuan Cai</div>
+                <div class="r">Links</div>
+            </div>
+            <div class="last">
+                <a id="channel-link">See on Are.na ↗</a>
+            </div>
             <p id="channel-description"></p>
             <p>Total Resources: <span id="channel-count"></span></p>
             <a id="channel-link" target="_blank">Visit Channel ↗</a>
     
             <div id="channel-blocks">
-                <ul class="block-category"><h3 id="images">Images</h3></ul>
+                <ul  class="block-category"><h3 id="images">Images</h3></ul>
                 <ul  class="block-category"><h3 id="links">Links</h3></ul>
                 <ul  class="block-category"><h3 id="pdfs">PDFs</h3></ul>
                 <ul  class="block-category"><h3 id="audios">Audios</h3></ul>
@@ -44,10 +47,7 @@
             </div>
         </div>
     <header>
-
         <h1 id="channel-title"></h1>
-        
-        <p><a id="channel-link">See on Are.na ↗</a></p>
         <section id="channel-description"></section>
     </header>
     <main>
@@ -56,7 +56,6 @@
             <p><span id="channel-count"></span> blocks</p>
         </section>
     </main>
-
     <footer>website by Yaxuan 2025</footer>
 </body>
 </html>

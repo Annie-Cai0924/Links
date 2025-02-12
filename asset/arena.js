@@ -503,6 +503,9 @@ if (categoryId) {
 }
 }
 
+
+
+
 function toggleCell(row, col) {
 	let cell = cells[row][col]; //create cell
 	let currentColor = cell.style.backgroundColor; //create current color 

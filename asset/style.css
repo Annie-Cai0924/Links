@@ -1,25 +1,48 @@
 /* Default Style */
 body {
-    font-family: Arial, Helvetica, "Liberation Sans", FreeSans, sans-serif;
-    color: rgb(255, 255, 255);
-    margin: 0;
-    padding: 0;
-    border-width: 0;
-    /* overflow: hidden; */
-    /*  cursor: pointer; */
-  }
-  body::before {
+	margin: 0;
+	padding: 0;
+    color: white;
+}
+
+body::before {
     content: "";
     position: fixed;
     top: 0;
-    left: 0;
-    width: 100vw;
+    left: 100px;
+    right: 100px;
+    width: 1200px;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5); 
+    background-color: rgb(0, 0, 0); 
+    z-index: -1; /* Make sure it's above ::before */
   }
 
   /* https://codepen.io/josetxu/pen/JoPzNGv */
 ÷
+
+
+header h1{
+	color:#fff;
+    font-size:140px;
+    text-align: center;
+    font-weight: bold;
+    padding-top:15vh;
+}
+
+.links{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 5vh auto;
+    color:#fff;
+    font-size:40px;
+    font-weight: bold;
+}
+.last{
+    text-align: center;
+    font-size: 28px;
+    color: #ffff;
+}
 
 .contentmap {
 	width: 90vmin;
@@ -55,6 +78,7 @@ body {
 	background-size: 50% 70%, 100% 100%, 100% 100%;
 	background-position: 100% 0% , 0 0, 0 0;
 }
+
 .letter-s::before,
 .letter-s::after {
 	content: "";
@@ -78,9 +102,10 @@ h1 {
     text-align: left;
     margin-left: 50px;
     margin-top: 160px;
+    color: white;
 }
 
-h1.maps{
+/* h1.maps{
     font-size: 300px;
     font-weight: bold;
     text-align: left;
@@ -88,13 +113,14 @@ h1.maps{
     line-height: 10px;
     margin-bottom: 500px;
     margin-top: 120px;
-}
+} */
 
 .intro {
     font-size: 40px;
     line-height: 1.6;
     max-width: 1300px;
     margin: 0 auto 20px;
+    color:#fff;
 }
 
 .image-block {
@@ -183,6 +209,7 @@ h1.maps{
     font-size: 1.2em;
     font-style: italic;
     padding-left: 10px;
+    color:#fff;
 }
 
 /* PDF */
@@ -232,4 +259,6 @@ footer {
         border-radius: 4px;
         box-shadow: none;
     }
+
 }
+
