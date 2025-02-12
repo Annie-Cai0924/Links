@@ -8,7 +8,7 @@ body {
     /* overflow: hidden; */
     /*  cursor: pointer; */
   }
-  /* body::before {
+  body::before {
     content: "";
     position: fixed;
     top: 0;
@@ -16,21 +16,21 @@ body {
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5); 
-  } */
+  }
 
   /* https://codepen.io/josetxu/pen/JoPzNGv */
-  .content {
+÷
+
+.contentmap {
 	width: 90vmin;
-	height: 90vmin;
-	/*background: rgb(252, 239, 239);*/
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-evenly;
 	align-items: center;
+    margin: 10vh auto;
 }
 
-.content div {
-	/*background-color: #fff;*/
+.contentmap div {
 	width: 14vmin;
 	height: 14vmin;
 	position: relative;
@@ -38,8 +38,8 @@ body {
 
 .letter-a {
 	background: 
-		conic-gradient(from 153deg at 50% 0%, #2196F360 0 7.5%, #fff0 0 100%), 
-		conic-gradient(from 153deg at 50% 0%, #2196F360 0 15%, #fff0 0 100%);
+		conic-gradient(from 153deg at 50% 0%, #00bbff72 0 7.5%, #fff0 0 100%), 
+		conic-gradient(from 153deg at 50% 0%, #00bbff72 0 7.5%, #fff0 0 100%);
 }
 .letter-m {
 	background: 
@@ -70,6 +70,7 @@ body {
 	border-radius: 5vmin 0 0 5vmin;
 	top: 0;
 }
+
 
 h1 {
     font-size: 100px;
