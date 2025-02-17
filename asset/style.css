@@ -8,8 +8,6 @@ body {
     padding: 0;
     border-width: 0;
 }
-
-
 .wrap{
 	display: absolute;
 	top: 0;
@@ -22,10 +20,10 @@ body {
 }
 .row .block{
 	width: 80vw;
-	height: 100vh;
+	min-height: 30vh;
 	overflow: hidden;
 	margin: 0 auto;
-	background-color: #000000e6;
+	background-color: #000000;
 }
 .wrap .title{
 	color:#fff;
@@ -34,7 +32,6 @@ body {
     font-weight: bold;
     padding-top:15vh;
 }
-
 .contentmap {
 	width: 90vmin;
 	display: flex;
@@ -78,11 +75,17 @@ body {
 }
 
 
+
+
+
 .letter-m {
 	background: 
 		linear-gradient(-135deg, #ffffff00 0 50%, #4100d860 0 100%),
 		linear-gradient(135deg, #ffffff00 0 50%, #4100d860 0 100%);
 }
+
+
+
 
 
 .letter-p {
@@ -111,6 +114,7 @@ body {
 	border-radius: 5vmin 0 0 5vmin;
 	top: 0;
 }
+
 
 
 
@@ -179,11 +183,7 @@ select:focus{
 	font-size:0.75rem;
 	float:left;
 }
-
-
-
-/* Mobile size */
-@media (max-width: 375px) {
+@media(min-width:480px){
 	h1{
 		width:33%;
 		display:block;
@@ -195,10 +195,7 @@ select:focus{
 		float:right;
 	}
 }
-
-
-/* website size */
-@media (min-width: 1280px) {
+@media(min-width:768px){
 	h1{
 		width:auto;
 	}
@@ -225,6 +222,17 @@ select:focus{
 	display: flex;
 	box-sizing: border-box;
 	padding:10vh;
+	flex-direction: column;
+}
+.Image .descc{
+	color:#fff;
+	text-align: center;
+	font-size:34px;
+	width: 60vw;
+	margin: 10vh  auto;
+}
+.Image .info{
+	display: flex;
 }
 .Image .name{
 	width: 50%;
@@ -233,6 +241,13 @@ select:focus{
 	text-align: center;
 	box-sizing: border-box;
 	padding-top:10vh;
+}
+.Image .cont{
+	width: 50%;
+}
+.Image .cont img{
+	width: 100%;
+	object-fit: cover;
 }
 /* .Image{
 	display: flex;
@@ -290,10 +305,10 @@ select:focus{
 .Attachment .name{
 	text-align: center;
 	font-size:32px;
-	margin: 10px 0;
+	margin: 10vh 0;
 }
 .Text{
-	height: 5vh !important;
+	height: 8vh !important;
 }
 .Text blockquote{
 	color:#fff;

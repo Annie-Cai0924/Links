@@ -1,48 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <link href="asset/style.css" rel="stylesheet">
-    <link href="asset/reset.css" rel="stylesheet">
-    <link href="asset/background.js" rel="stylesheet">
-    <script defer src="asset/arena.js"></script>
-    <script defer src="asset/background.js"></script>
-</head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Links</title>
-    <body>
-        <div class="wrap">
-            <div class="row">
-                <div class="block b1">
-                    <div class="title">The Art and Function of</div>
-                    <div class="contentmap">
-
-        <div class="navbar" style="display: none;">
-            <a href="#images">Images</a>
-            <a href="#links">Links</a>
-            <a href="#pdfs">PDFs</a>
-            <a href="#audios">Audios</a>
-            <a href="#text">Text</a>
-        </div>
+    <title>Document</title>
     
-        <div class="content">
-            <h1>The Art and Function of</h1>
-            <div class="contentmap">
-                <div class="letter-m"></div>
-                <div class="letter-a"></div>
-                <div class="letter-p"></div>
-                <div class="letter-s"></div>
+    <link rel="stylesheet" href="./asset/style.css">
+    <link rel="stylesheet" href="./asset/reset.css">
+    <link rel="stylesheet" href="./asset/arena.js">
+    <link rel="stylesheet" href="./asset/background.css">
+    <link rel="stylesheet" href="./asset/background.js">
+    
+
+</head>
+<body>
+    <div class="wrap">
+        <div class="row">
+            <div class="block b1">
+                <div class="title">The Art and Function of</div>
+                <div class="contentmap">
+                    <div class="letter-m"></div>
+                    <div class="letter-a"></div>
+                    <div class="letter-p"></div>
+                    <div class="letter-s"></div>
+                </div>
+                <div class="links">
+                    <div class="l">Yaxuan Cai</div>
+                    <div class="r">Links</div>
+                </div>
+                <div class="last">
+                    <a id="channel-link">See on Are.na ↗</a>
+                </div>
             </div>
-            <div class="links">
-                <div class="l">Yaxuan Cai</div>
-                <div class="r">Links</div>
-            </div>
-            <div class="last">
-                <a id="channel-link">See on Are.na ↗</a>
-            </div>
-           <div class="block b2">
+            <div class="block b2">
                 <div class="desc">
                     Maps are more than navigational tools—they are stories of exploration, representation, and imagination. This collection delves into the diverse world of maps, from ancient cartography to modern data visualizations. It highlights how maps shape our understanding of space, identity, and history while showcasing artistic, functional, and speculative approaches to mapping.
                 </div>
@@ -71,16 +61,11 @@
                 <div id="viewport"></div>
             </div>
         </div>
-        
-
-
-  
-      
     </div>
     <script defer src="./asset/bk.js"></script>
-    <script src="./asset/lib/three.min.js"></script>
-    <script src="./asset/lib/TweenMax.min.js"></script>
-    <script src="./asset/lib/OrbitControls.js"></script>
+    <script src="./asset/Map/Orbit.js"></script>
+    <script src="./asset/Map/Threemax.js"></script>
+    <script src="./asset/Map/Threemin.js"></script>
     
     <script>
         var scene = new THREE.Scene();
@@ -238,58 +223,73 @@
 
         let channelSlug = 'the-art-and-function-of-maps'
         fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-store' })
-        .then((response) => response.json()) // Return it as JSON data
-        .then((data) => { // Do stuff with the data
-            const rowElement = document.querySelector('.row');
+        .then((response) => response.json()) 
+        .then((data) => { 
+            // 分类类型
+            const categorizedBlocks = {};
             data.contents.reverse().forEach((block) => {
-			    console.log(block) // The data for a single block
-                const newDiv = document.createElement('div');
-                newDiv.className = 'block ' + block.class;
-                // newDiv.textContent = 'This is a new block added by JavaScript.';
-                let blockItem = '';
+                if (!categorizedBlocks[block.class]) {
+                    categorizedBlocks[block.class] = [];
+                }
+                categorizedBlocks[block.class].push(block);
+            });
+            console.log(232,categorizedBlocks);
+            for (const category in categorizedBlocks) {
+                const blocks = categorizedBlocks[category];
+                console.log(blocks);
+                const rowElement = document.querySelector('.row');
 
+                blocks.forEach((block) => {
+                    console.log(block)
+                    const newDiv = document.createElement('div');
+                    newDiv.className = 'block ' + block.class;
+                    let blockItem = '';
+                    if (block.class === 'Link') {
+                        categoryId = 'links';
+                        blockItem = `
+                            <div class="show">  <img src="${ block.image.original.url }" alt="${ block.title }"></div>
+                            <div class="overlay">
+                                <p class="title">${block.title}</p>
+                                <p class="descption">${block.description}</p>
+                                <p class="exten"><a href="${ block.source.url }">See the original ↗</a></p>
+                            </div>`;
 
-                if (block.class === 'Link') {
-                    categoryId = 'links';
-                    blockItem = `
-                        <div class="show">  <img src="${ block.image.original.url }" alt="${ block.title }"></div>
-                        <div class="overlay">
-                            <p class="title">${block.title}</p>
-                            <p class="descption">${block.description}</p>
-                            <p class="exten"><a href="${ block.source.url }">See the original ↗</a></p>
-                        </div>`;
+                    } else if (block.class === 'Image') {
+                        categoryId = 'images';
+                        blockItem = `
+                            <div class="descc">${block.description}</div>
+                            <div class="info">
+                                <div class="name">${block.title}</div>
+                                <div class="cont">
+                                    <img src="${ block.image.original.url }" alt="${ block.title }">
+                                </div>
+                            </div>
+                   
+                            `;
 
-                } else if (block.class === 'Image') {
-                    categoryId = 'images';
-                    blockItem = `
-                        <div class="descc">${block.description}</div>
-                        <div class="name">${block.title}</div>
-                        <div class="cont">
-                             <img src="${ block.image.original.url }" alt="${ block.title }">
-                        </div>
+                    } else if (block.attachment && block.attachment.content_type.includes('pdf')) {
+                        categoryId = 'pdfs';
+                        blockItem = `
+                            <div class="list"><embed src="${ block.attachment.url }" type="application/pdf" ></div>
+                            <div class="name"> <p><a href="${ block.attachment.url }" target="_blank">Download PDF →</a></p></div>
                         `;
 
-                } else if (block.attachment && block.attachment.content_type.includes('pdf')) {
-                    categoryId = 'pdfs';
-                    blockItem = `
-                        <div class="list"><embed src="${ block.attachment.url }" type="application/pdf" ></div>
-                        <div class="name"> <p><a href="${ block.attachment.url }" target="_blank">Download PDF →</a></p></div>
-                      `;
+                    } else if (block.embed && block.embed.type.includes('rich')) {
+                        categoryId = 'audios';
+                        blockItem = ` <div > 897
+                                ${ block.embed.html } </div >`; 897
 
-                } else if (block.embed && block.embed.type.includes('rich')) {
-                    categoryId = 'audios';
-                    blockItem = ` <div>
-                            ${ block.embed.html } </div>`;
-
-                } else if (block.class == 'Text') {
-                    categoryId = 'text'
-                    blockItem = `
-                                    <blockquote>${ block.content }</blockquote>
-                                `
-                }
-                newDiv.innerHTML = blockItem 
-                rowElement.appendChild(newDiv);
-		    })
+                    } else if (block.class == 'Text') {
+                        categoryId = 'text'
+                        blockItem = `
+                                        <blockquote>${ block.content }</blockquote>
+                                    `
+                    }
+                    newDiv.innerHTML = blockItem 
+                    rowElement.appendChild(newDiv);
+                })
+            }
+     
         })
     </script>
 </body>
