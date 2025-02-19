@@ -17,13 +17,15 @@ body {
 .row{
 	display: flex;
 	flex-direction: column;
+	gap: 1vh;
 }
 .row .block{
 	width: 80vw;
-	min-height: 30vh;
+	min-height: 100vh;
 	overflow: hidden;
 	margin: 0 auto;
 	background-color: #000000;
+	border-radius: 0.5vh;
 }
 .wrap .title{
 	color:#fff;
@@ -316,5 +318,42 @@ select:focus{
 	font-size: 40px;
 }
 .Media{
-	display: none;
+	display: none !important;
+}
+
+/* 在 asset/css.css 中添加 */
+.block {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+}
+
+.block.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+.Text blockquote{
+	box-sizing: border-box;
+	line-height: 80vh;
+	font-size:50px;
+    font-family: monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 3px solid;
+    /* width: 0; */
+    animation: typing 0.5s steps(40, end), blink-caret .75s step-end infinite;
+}
+
+/* 打字动画 */
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+/* 光标闪烁动画 */
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: #fff }
 }
