@@ -6,7 +6,7 @@
  * @FilePath: \Links\index.html
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -20,56 +20,62 @@
     <svg id="stage" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000;"></svg>
     <div class="wrap">
 
-        <div class="row">
-            <div class="block b1">
-                <div class="title">The Art and Function of</div>
-                <div class="contentmap">
-                    <div class="letter-m"></div>
-                    <div class="letter-a"></div>
-                    <div class="letter-p"></div>
-                    <div class="letter-s"></div>
+        <div class="row cards">
+            <div class="block b1 card">
+                <div class="card__inner">
+                    <div class="title">The Art and Function of</div>
+                    <div class="contentmap">
+                        <div class="letter-m"></div>
+                        <div class="letter-a"></div>
+                        <div class="letter-p"></div>
+                        <div class="letter-s"></div>
+                    </div>
+                    <div class="links">
+                        <div class="l">Yaxuan Cai</div>
+                        <div class="r">Links</div>
+                    </div>
+                    <div class="last">
+                        <a id="channel-link">See on Are.na ↗</a>
+                    </div>
                 </div>
-                <div class="links">
-                    <div class="l">Yaxuan Cai</div>
-                    <div class="r">Links</div>
-                </div>
-                <div class="last">
-                    <a id="channel-link">See on Are.na ↗</a>
-                </div>
+                
             </div>
-            <div class="block b2">
-                <div class="desc">
-                    Maps are more than navigational tools—they are stories of exploration, representation, and imagination. This collection delves into the diverse world of maps, from ancient cartography to modern data visualizations. It highlights how maps shape our understanding of space, identity, and history while showcasing artistic, functional, and speculative approaches to mapping.
+            <div class="block b2 card">
+                <div class="card__inner">
+                    <div class="desc">
+                        Maps are more than navigational tools—they are stories of exploration, representation, and imagination. This collection delves into the diverse world of maps, from ancient cartography to modern data visualizations. It highlights how maps shape our understanding of space, identity, and history while showcasing artistic, functional, and speculative approaches to mapping.
+                    </div>
+                    <div id="stats">
+                        <h1>Select an area</h1>
+                        <a id="map-link" target="_blank" href="https://www.google.ca/maps/place/27.98785,86.9250261">Map</a>    
+                        <form>
+                            <select name="geo">
+                            <option value="athabasca">Athabasca Glacier</option>
+                            <option value="coldeliseran">Col de l'Iseran</option>
+                            <option value="everest" selected="">Mount Everest</option>
+                            <option value="franzjosefglacier">Franz Josef Glacier</option>
+                            <option value="grouse">Grouse Grind</option>
+                            <option value="jotunheimen">Jotunheimen</option>
+                            <option value="k2">K2</option>
+                            <option value="kangchenjunga">Kangchenjunga</option>
+                            <option value="everest-valley">Khumbu Glacier</option>
+                            <option value="lakecomo">Lake Como</option>
+                            <option value="petra">Petra</option>
+                            <option value="sanfrancisco">San Francisco</option>
+                            <option value="valparaiso">Valparaíso</option>
+                            </select>
+                        </form> 
+                        <span id="loading"></span>
+                    </div>
+                    <div id="viewport"></div>
                 </div>
-                <div id="stats">
-                    <h1>Select an area</h1>
-                    <a id="map-link" target="_blank" href="https://www.google.ca/maps/place/27.98785,86.9250261">Map</a>    
-                    <form>
-                        <select name="geo">
-                        <option value="athabasca">Athabasca Glacier</option>
-                        <option value="coldeliseran">Col de l'Iseran</option>
-                        <option value="everest" selected="">Mount Everest</option>
-                        <option value="franzjosefglacier">Franz Josef Glacier</option>
-                        <option value="grouse">Grouse Grind</option>
-                        <option value="jotunheimen">Jotunheimen</option>
-                        <option value="k2">K2</option>
-                        <option value="kangchenjunga">Kangchenjunga</option>
-                        <option value="everest-valley">Khumbu Glacier</option>
-                        <option value="lakecomo">Lake Como</option>
-                        <option value="petra">Petra</option>
-                        <option value="sanfrancisco">San Francisco</option>
-                        <option value="valparaiso">Valparaíso</option>
-                        </select>
-                    </form> 
-                    <span id="loading"></span>
-                </div>
-                <div id="viewport"></div>
             </div>
         </div>
     </div>
     <script src="./asset/lib/three.min.js"></script>
-    <script src="./asset/lib/TweenMax.js"></script>
+    <script src="./asset/lib/TweenMax.min.js"></script>
     <script src="./asset/lib/OrbitControls.js"></script>
+    <script src="./asset/lib/aat.min.js"></script>
     <script src="./asset/arena.js"></script>
     <script>
         // 在 asset/arena.js 中添加
@@ -97,6 +103,9 @@
             // 初始检查
             checkVisibility();
         });
+    </script>
+    <script>
+
     </script>
 </body>
 </html>
