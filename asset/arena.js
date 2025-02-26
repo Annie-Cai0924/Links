@@ -476,6 +476,10 @@ fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-stor
   checkVisibility();
 })
 
+
+
+// found it on:https://codepen.io/kevinnewcombe/pen/XMVoKv
+// want make it become a navigation bar in my page
 var scene = new THREE.Scene();
 var viewport, renderer, camera, controls, particleDistance, centerPoint = {};
 var transitionDuration = 1000;
@@ -930,7 +934,7 @@ animate = function (tStamp) {
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
-
+// ask for GPT and claude
 function startOver() {
 // canvas dimensions
 
