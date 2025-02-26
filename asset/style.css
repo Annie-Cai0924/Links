@@ -941,14 +941,15 @@ select:focus{
     width: 100%;
     overflow: visible !important;
 }
-
-/* 打字动画 */
+/* ask for claude */
+/* Typing animation */
 @keyframes typing {
     from { width: 0 }
     to { width: 100% }
 }
 
-/* 光标闪烁动画 */
+/* ask for claude */
+/* Typing animation */
 @keyframes blink-caret {
     from, to { border-color: transparent }
     50% { border-color: #fff }
