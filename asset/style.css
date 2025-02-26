@@ -141,6 +141,12 @@ This section of code defines two pseudo-elements of.letter-s ::before and ::afte
 a{
 	color:#fff;
 }
+
+
+/* found it on:https://codepen.io/kevinnewcombe/pen/XMVoKv */
+/* Use it as my nav bar */
+/* • Make canvas (HTML canvas element) behave like an object that can be grabbed and dragged to enhance the sense of interaction. 
+• When the mouse is pressed (:active), the mouse pointer becomes "grip", similar to the Google Maps drag-and-drop experience. */
 canvas{
 	cursor:grab;
 	cursor:-webkit-grab; 
@@ -163,7 +169,9 @@ h1{
 	display:none;
 }
 
-/* 打字机动画样式 */
+/* ask for claude */
+/* use it on my dec */
+/* Cursor effect */
 .cursor {
 	display: inline-block;
 	width: 3px;
@@ -173,7 +181,8 @@ h1{
 	animation: blink-caret 0.75s step-end infinite;
   }
   
-  /* 光标闪烁动画 */
+  /* ask for claude */
+/* use it on my dec */
   @keyframes blink-caret {
 	from, to { opacity: 0 }
 	50% { opacity: 1 }
