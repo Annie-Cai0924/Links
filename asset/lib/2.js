@@ -1,3 +1,8 @@
+
+
+
+// found it on:https://codepen.io/ste-vg/pen/qobgBM
+// used to my mouse but now delete
 class Squiggle {
     constructor(stage, settings, grid) {
         this.grid = grid;
