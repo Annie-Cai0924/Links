@@ -217,6 +217,50 @@ class App {
   }
 }
 
+
+// 为desc元素添加字符逐个显示的打字效果
+document.addEventListener('DOMContentLoaded', function() {
+  // 获取描述元素
+  const descElement = document.querySelector('.desc');
+  
+  if (descElement) {
+      // 保存原始文本
+      const originalText = descElement.innerText;
+      
+      // 清空文本内容
+      descElement.innerHTML = '';
+      
+      // 创建文本容器和光标元素
+      const textContainer = document.createElement('span');
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      
+      descElement.appendChild(textContainer);
+      descElement.appendChild(cursor);
+      
+      // 逐个字符添加文本
+      let charIndex = 0;
+      const typingSpeed = 50; // 每个字符的打印速度（毫秒）
+      
+      function typeNextChar() {
+          if (charIndex < originalText.length) {
+              // 添加下一个字符
+              textContainer.innerHTML += originalText.charAt(charIndex);
+              charIndex++;
+              setTimeout(typeNextChar, typingSpeed);
+          } else {
+              // 打字结束，删除光标
+              setTimeout(() => {
+                  cursor.style.display = 'none';
+              }, 1000);
+          }
+      }
+      
+      // 开始打字
+      typeNextChar();
+  }
+});
+
 fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-store' })
 .then((response) => response.json()) 
 .then((data) => { 
