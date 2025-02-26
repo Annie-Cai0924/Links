@@ -17,13 +17,15 @@ body {
 .row{
 	display: flex;
 	flex-direction: column;
+	gap: 1vh;
 }
 .row .block{
 	width: 80vw;
-	min-height: 30vh;
+	min-height: 100vh;
 	overflow: hidden;
 	margin: 0 auto;
 	background-color: #000000;
+	border-radius: 0.5vh;
 }
 .wrap .title{
 	color:#fff;
@@ -183,16 +185,108 @@ select:focus{
 	font-size:0.75rem;
 	float:left;
 }
-@media(min-width:480px){
-	h1{
-		width:33%;
-		display:block;
+@media(max-width:480px){
+	.wrap .title {
+		color: #fff;
+		font-size: 50px;
+		text-align: center;
+		font-weight: bold;
+		padding-top: 15vh;
 	}
-	form{
-		width:33%;
+	.row .block{
+		min-height: 100vh;
+		overflow: hidden;
+		margin: 0 auto;
+		background-color: #000000c9;
+		border-radius: 0.5vh;
+		width: 100vw;
 	}
-	#map-link{
-		float:right;
+	.Image{
+		display: flex;
+		box-sizing: border-box;
+		flex-direction: column;
+		padding:0 !important;
+	}
+	.Image .descc{
+		color:#fff;
+		text-align: center;
+		font-size:24px !important;
+		margin: 4vh  auto;
+		width: 100vw !important;
+	}
+	.Image .info{
+		display: flex;
+		flex-direction: column;
+	}
+	.Image .name{
+		width: 100vw !important;
+		color:#fff;
+		font-size:40px !important;
+		text-align: center;
+		box-sizing: border-box;
+		padding-bottom:4vh;
+	}
+	.Image .cont{
+		width: 100vw !important;
+	}
+	.Image .cont img{
+		width: 100%;
+		object-fit: cover;
+	}
+	
+	.Link{
+		display: flex;
+		flex-direction: column !important;
+	}
+	.Link .show{
+		width: 100vw  !important;
+	
+	}
+	.Link img{
+		display: block;
+		width: 100%;
+		object-fit: contain;
+	}
+	.Link .overlay{
+		width: 100vw !important;
+		color: #fff;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		min-height: 30vh;
+	}
+	.Link .overlay .title{
+		font-size: 45px;
+	}
+	.Link .overlay .descption{
+		font-size:28px;
+		margin: 20px 0;
+	}
+	
+	.Attachment{
+		display: flex;
+		flex-direction: column;
+	}
+	.Attachment .list embed{
+		width: 100vw !important;
+		height: 100vh !important;
+	}
+	.Attachment .name{
+		text-align: center;
+		font-size:32px;
+		margin: 10vh 0;
+	}
+	
+	.Media{
+		display: none !important;
+	}
+	
+	
+	.Text {
+		width: 100vw !important;
+		text-align: center;
+		padding:40px 0;
+		box-sizing: border-box !important;
 	}
 }
 @media(min-width:768px){
@@ -309,12 +403,53 @@ select:focus{
 }
 .Text{
 	height: 8vh !important;
+	color:#fff !important;
+	font-size: 60px;
+	text-align: center;
 }
-.Text blockquote{
+/* .Text blockquote{
 	color:#fff;
 	text-align: center;
 	font-size: 40px;
-}
+	line-height: 9vh !important;
+} */
 .Media{
-	display: none;
+	display: none !important;
+}
+
+/* 在 asset/css.css 中添加 */
+.block {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+}
+
+.block.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* .Text blockquote{
+	box-sizing: border-box;
+	line-height: 80vh;
+	font-size:50px;
+    font-family: monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 3px solid;
+    /* width: 0; */
+    /* animation: typing 0.5s steps(40, end), blink-caret .75s step-end infinite;}  */
+
+
+/* 打字动画 */
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+/* 光标闪烁动画 */
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: #fff }
 }
