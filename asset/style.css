@@ -2,7 +2,9 @@
     margin: 0;padding:0;
 }
 body {
-    font-family: Arial, Helvetica, "Liberation Sans", FreeSans, sans-serif;
+	font-family: "Space Mono", serif;
+	font-weight: 400;
+	font-style: normal;
     background-color: #000;
     margin: 0;
     padding: 0;
@@ -68,6 +70,7 @@ body {
     text-align: center;
     font-size: 28px;
     color: #ffff;
+	padding-bottom: 60px;
 }
 
 .letter-a {
@@ -281,7 +284,7 @@ select:focus{
 		display: none !important;
 	}
 	
-	
+
 	.Text {
 		width: 100vw !important;
 		text-align: center;
@@ -840,6 +843,11 @@ select:focus{
         max-height: 50vh;
     }
     
+.desc{
+	font-size: 20px;
+	line-height: 26px;
+}
+
     .card__inner {
         padding: 8px;
     }
@@ -885,6 +893,25 @@ select:focus{
     padding-top: 0;
 }
 
+.links {
+	display: flex;
+	flex-direction: column; /* 竖向排列 */
+	align-items: center; /* 可选：让元素水平居中 */
+  }
+
+.last{
+	font-size: 20px;
+}
+
+.l{
+	font-size: 20px;
+
+}
+
+.r{
+	font-size: 20px;
+}
+
 /* Center the map on all devices */
 #viewport {
     display: flex;
@@ -892,16 +919,4 @@ select:focus{
     align-items: center;
     width: 100%;
     overflow: visible !important;
-}
-
-/* 打字动画 */
-@keyframes typing {
-    from { width: 0 }
-    to { width: 100% }
-}
-
-/* 光标闪烁动画 */
-@keyframes blink-caret {
-    from, to { border-color: transparent }
-    50% { border-color: #fff }
 }
