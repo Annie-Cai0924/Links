@@ -7,6 +7,22 @@ document.head.appendChild(markdownIt)
 // Okay, Are.na stuff!
 let channelSlug = 'the-art-and-function-of-maps'
 
+
+/*      Wanted to use it as a backdrop. Found it at codepen：https://codepen.io/Dillo/pen/raBqEZy
+
+        Very, very much inspired by Ben Matthews' pen: https://codepen.io/tsuhre/full/BaXJrgw
+        though I did not have a look at his code
+        */
+
+/* each kind of piece in this tiling is assigned a number which tells in binary which sides are crossed by a line:
+           1 for top
+           2 for left
+           4 for right
+           8 for bottom
+           for example, the tile with a quater circle in its top-left corner has a line crossings its to and left sides=> encoded1+2=3
+           Only tiles with numbers 3,5,6,9,10 and 12 actually exist (4-bit numbers with two 1s)
+        */
+// The code uses SVG path and GSAP (Animation library) to achieve dynamic curve path animation, similar to the effect of graffiti.
 class Squiggle {
   constructor(stage, settings, grid) {
       this.grid = grid;
@@ -135,7 +151,7 @@ class App {
           };
       };
       
-      // 鼠标移动事件
+
       this.container.addEventListener('mousemove', (e) => {
           const position = getPosition(e);
           if (this.lastMousePosition) {
@@ -146,12 +162,12 @@ class App {
           this.lastMousePosition = position;
       });
       
-      // 鼠标离开容器时重置
+      // Reset when mouse leaves container
       this.container.addEventListener('mouseleave', () => {
           this.lastMousePosition = null;
       });
 
-      // 触摸事件支持
+      // Touch event support
       this.container.addEventListener('touchmove', (e) => {
           e.preventDefault();
           const position = getPosition(e);
@@ -217,20 +233,20 @@ class App {
   }
 }
 
-
-// 为desc元素添加字符逐个显示的打字效果
+// ask for claude
+// Adds a character-by-character typing effect to the desc element
 document.addEventListener('DOMContentLoaded', function() {
-  // 获取描述元素
+  // Get description element
   const descElement = document.querySelector('.desc');
   
   if (descElement) {
-      // 保存原始文本
+      //Save original text
       const originalText = descElement.innerText;
       
-      // 清空文本内容
+      // Clear text content
       descElement.innerHTML = '';
       
-      // 创建文本容器和光标元素
+      // Create a text container and cursor elements
       const textContainer = document.createElement('span');
       const cursor = document.createElement('span');
       cursor.className = 'cursor';
@@ -238,25 +254,25 @@ document.addEventListener('DOMContentLoaded', function() {
       descElement.appendChild(textContainer);
       descElement.appendChild(cursor);
       
-      // 逐个字符添加文本
+      // Add text character by character
       let charIndex = 0;
-      const typingSpeed = 50; // 每个字符的打印速度（毫秒）
+      const typingSpeed = 50; // Print speed per character (milliseconds)
       
       function typeNextChar() {
           if (charIndex < originalText.length) {
-              // 添加下一个字符
+              // Add the next character
               textContainer.innerHTML += originalText.charAt(charIndex);
               charIndex++;
               setTimeout(typeNextChar, typingSpeed);
           } else {
-              // 打字结束，删除光标
+              // After typing, delete the cursor
               setTimeout(() => {
                   cursor.style.display = 'none';
               }, 1000);
           }
       }
       
-      // 开始打字
+      // Start typing
       typeNextChar();
   }
 });
@@ -267,7 +283,8 @@ fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-stor
   // Set channel link
   document.getElementById('channel-link').href = `https://www.are.na/channel/${channelSlug}`;
   
-  // 分类类型
+  // combine with claude
+  // Classification type
   const categorizedBlocks = {};
   data.contents.reverse().forEach((block) => {
       if (!categorizedBlocks[block.class]) {
@@ -285,6 +302,9 @@ fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-stor
           let blockItem = '';
           let categoryId = '';
           
+
+
+          // links！
           if (block.class === 'Link') {
               categoryId = 'links';
               blockItem = `
@@ -295,6 +315,8 @@ fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-stor
                       <p class="exten"><a href="${ block.source?.url || '#' }" target="_blank">See the original ↗</a></p>
                   </div>`;
 
+
+           // Images！
           } else if (block.class === 'Image') {
               categoryId = 'images';
               blockItem = `
@@ -307,6 +329,10 @@ fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-stor
                   </div>
                   `;
           } 
+
+
+
+               // PDFs！
           else if (block.attachment && block.attachment.content_type && block.attachment.content_type.includes('pdf')) {
               categoryId = 'pdfs';
               blockItem = `
@@ -314,15 +340,24 @@ fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-stor
                   <div class="name"> <p><a href="${ block.attachment.url }" target="_blank">Download PDF →</a></p></div>
               `;
 
+
+
+                   // Audios！
           } else if (block.embed && block.embed.type && block.embed.type.includes('rich')) {
               categoryId = 'audios';
               blockItem = ` <div > 
                       ${ block.embed.html } </div >`; 
 
+
+
+                           // Texts！
           } else if (block.class == 'Text') {
               categoryId = 'text';
               blockItem = `${ block.content }`;
           }
+
+
+               // Vedios！
           else if (block.class == 'Media') {
             blockItem = '';
             let embed = block.embed?.type || '';
@@ -439,27 +474,6 @@ fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-stor
 
   // Initial check
   checkVisibility();
-
-  // 打字机效果
-  const textElement = document.querySelector('.Text');
-  if (textElement) {
-    const text = textElement.innerText;
-    textElement.innerText = ''; // 清空文本内容
-
-    let index = 0;
-    const typingSpeed = 50; // 打字速度（毫秒）
-
-    function typeWriter() {
-      if (index < text.length) {
-        textElement.innerText += text.charAt(index);
-        index++;
-        setTimeout(typeWriter, typingSpeed);
-      }
-    }
-
-    typeWriter();
-  }
-
 })
 
 var scene = new THREE.Scene();
