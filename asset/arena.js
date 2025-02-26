@@ -220,6 +220,9 @@ class App {
 fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-store' })
 .then((response) => response.json()) 
 .then((data) => { 
+  // Set channel link
+  document.getElementById('channel-link').href = `https://www.are.na/channel/${channelSlug}`;
+  
   // 分类类型
   const categorizedBlocks = {};
   data.contents.reverse().forEach((block) => {
@@ -236,221 +239,182 @@ fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-stor
           const newDiv = document.createElement('div');
           newDiv.className = 'block ' + block.class;
           let blockItem = '';
+          let categoryId = '';
+          
           if (block.class === 'Link') {
               categoryId = 'links';
               blockItem = `
-                  <div class="show">  <img src="${ block.image.original.url }" alt="${ block.title }"></div>
+                  <div class="show">  <img src="${ block.image?.original?.url || '' }" alt="${ block.title || 'Link' }"></div>
                   <div class="overlay">
-                      <p class="title">${block.title}</p>
-                      <p class="descption">${block.description}</p>
-                      <p class="exten"><a href="${ block.source.url }">See the original ↗</a></p>
+                      <p class="title">${block.title || ''}</p>
+                      <p class="descption">${block.description || ''}</p>
+                      <p class="exten"><a href="${ block.source?.url || '#' }" target="_blank">See the original ↗</a></p>
                   </div>`;
 
           } else if (block.class === 'Image') {
               categoryId = 'images';
               blockItem = `
-                  <div class="descc">${block.description}</div>
+                  <div class="descc">${block.description || ''}</div>
                   <div class="info">
-                      <div class="name">${block.title}</div>
+                      <div class="name">${block.title || ''}</div>
                       <div class="cont">
-                          <img src="${ block.image.original.url }" alt="${ block.title }">
+                          <img src="${ block.image?.original?.url || '' }" alt="${ block.title || 'Image' }">
                       </div>
                   </div>
                   `;
           } 
-          else if (block.attachment && block.attachment.content_type.includes('pdf')) {
+          else if (block.attachment && block.attachment.content_type && block.attachment.content_type.includes('pdf')) {
               categoryId = 'pdfs';
               blockItem = `
                   <div class="list"><embed src="${ block.attachment.url }" type="application/pdf" ></div>
                   <div class="name"> <p><a href="${ block.attachment.url }" target="_blank">Download PDF →</a></p></div>
               `;
 
-          } else if (block.embed && block.embed.type.includes('rich')) {
+          } else if (block.embed && block.embed.type && block.embed.type.includes('rich')) {
               categoryId = 'audios';
               blockItem = ` <div > 
                       ${ block.embed.html } </div >`; 
 
           } else if (block.class == 'Text') {
-              categoryId = 'text'
+              categoryId = 'text';
               blockItem = `${ block.content }`;
           }
           else if (block.class == 'Media') {
-            blockItem = ''
-            let embed = block.embed.type
-            console.log(280,embed)
+            blockItem = '';
+            let embed = block.embed?.type || '';
+            console.log(280,embed);
             // Linked video!
             if (embed.includes('video')) {
-              // …still up to you, but here's an example `iframe` element:
-              blockItem  =
-                `
-                <li class="content-block">
+              blockItem = `
+                <div class="content-block">
                 <div class="video">
                   <p><em>Video</em></p>
                   ${ block.embed.html }
-                  <p><em><a href="${ block.source.url }" target="blank">Watch original ↗</a></em></p>
+                  <p><em><a href="${ block.source?.url || '#' }" target="_blank">Watch original ↗</a></em></p>
                 </div>
-                </li>
-                `
+                </div>
+                `;
             }
-
             // Linked audio!
             else if (embed.includes('rich')) {
-              // …up to you!
-
-              blockItem = 
-              `
-              <li class="content-block">
+              blockItem = `
+              <div class="content-block">
               <div class="audio">
                 <p><em>Audio</em></p>
                 ${ block.embed.html }
-                <img src="${ block.image.original.url }">
-                <p><em><a href="${ block.source.url }" target="blank">Listem ↗</a></em></p>
+                ${block.image?.original?.url ? `<img src="${ block.image.original.url }">` : ''}
+                <p><em><a href="${ block.source?.url || '#' }" target="_blank">Listen ↗</a></em></p>
               </div>
-              </li>
-              `
+              </div>
+              `;
             }
           }
           else if (block.class == 'Attachment') {
-            let attachment = block.attachment.content_type // Save us some repetition
-            // console.log(block)
-        
+            let attachment = block.attachment?.content_type || ''; // Save us some repetition
+            
             // Uploaded videos!
             if (attachment.includes('video')) {
-              console.log('Attached video: ', block)
-              // …still up to you, but we'll give you the `video` element:
-              url = block.attachment.url;
-              blockItem=`
-                <li class="content-block">
+              console.log('Attached video: ', block);
+              blockItem = `
+                <div class="content-block">
                 <div class="video">
                   <p><em>Video</em></p>
                   <video controls src="${ block.attachment.url }"></video>
                 </div>
-                </li>
-                `
+                </div>
+                `;
             }
         
             // Uploaded PDFs!
             else if (attachment.includes('pdf')) {
-              blockItem=
-                `
-                <li class="content-block">
+              blockItem = `
+                <div class="content-block">
                   <div class="image"> 
                     <picture>
-                      <source media="(max-width: 428px)" srcset="${ block.image.thumb.url }">
-                      <source media="(max-width: 640px)" srcset="${ block.image.large.url }">
-                      <img src="${ block.image.original.url }">
+                      <source media="(max-width: 428px)" srcset="${ block.image?.thumb?.url || '' }">
+                      <source media="(max-width: 640px)" srcset="${ block.image?.large?.url || '' }">
+                      <img src="${ block.image?.original?.url || '' }">
                     </picture>
                   </div>
                   <div class="data">
                     <p><em>PDF</em></p>
-                    <h2>${ block.title }</h2>
-                    <p class="description">${ block.description_html }</p>
-                    <p><a href="${ block.source.url }" target="blank">See the original ↗</a></p>
+                    <h2>${ block.title || '' }</h2>
+                    <p class="description">${ block.description_html || '' }</p>
+                    <p><a href="${ block.source?.url || '#' }" target="_blank">See the original ↗</a></p>
                   </div>
-                </li>
-                `
+                </div>
+                `;
             }
         
             // Uploaded audio!
             else if (attachment.includes('audio')) {
-              // …still up to you, but here's an `audio` element:
-              blockItem=
-                `
-                <li>
+              blockItem = `
+                <div>
                   <p><em>Audio</em></p>
                   <audio controls src="${ block.attachment.url }"></audio>
-                </li>
-                `
-              // More on audio: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
+                </div>
+                `;
             }
           }
-          newDiv.innerHTML = blockItem 
-          rowElement.appendChild(newDiv);
-      })
+          
+          if (blockItem) {
+            newDiv.innerHTML = blockItem;
+            rowElement.appendChild(newDiv);
+          }
+      });
   }
 
-  // 将第一处声明改为具有描述性的不同名称
-  const visibilityBlocks = document.querySelectorAll('.block');
-  const windowHeight = window.innerHeight;
+  // Make all blocks visible initially
+  setTimeout(() => {
+    const allBlocks = document.querySelectorAll('.block');
+    allBlocks.forEach(block => {
+      block.classList.add('visible');
+    });
+  }, 500);
 
+  // Setup visibility check for scrolling
   function checkVisibility() {
-    visibilityBlocks.forEach(block => {
+    const blocks = document.querySelectorAll('.block');
+    const viewportHeight = window.innerHeight;
+    
+    blocks.forEach(block => {
       const blockTop = block.getBoundingClientRect().top;
-      // 检查 block 是否包含 'Media' 类
-      if (!block.classList.contains('Media')) {
-        if (blockTop < windowHeight && blockTop > -windowHeight) {
-          block.classList.add('visible');
-        } else {
-          block.classList.remove('visible');
-        }
+      // Include all blocks, including Media class
+      if (blockTop < viewportHeight + 200 && blockTop > -block.offsetHeight) {
+        block.classList.add('visible');
+      } else {
+        block.classList.remove('visible');
       }
     });
   }
 
   window.addEventListener('scroll', checkVisibility);
   window.addEventListener('resize', () => {
-      windowHeight = window.innerHeight;
-      checkVisibility();
+    checkVisibility();
   });
 
-  // 初始检查
+  // Initial check
   checkVisibility();
-  // endx
 
   // 打字机效果
-  const testElement = document.querySelector('.Text');
-  const text = testElement.innerText;
-  testElement.innerText = ''; // 清空文本内容
+  const textElement = document.querySelector('.Text');
+  if (textElement) {
+    const text = textElement.innerText;
+    textElement.innerText = ''; // 清空文本内容
 
-  let index = 0;
-  const typingSpeed = 100; // 打字速度（毫秒）
+    let index = 0;
+    const typingSpeed = 50; // 打字速度（毫秒）
 
-  function typeWriter() {
+    function typeWriter() {
       if (index < text.length) {
-          testElement.innerText += text.charAt(index);
-          index++;
-          setTimeout(typeWriter, typingSpeed);
+        textElement.innerText += text.charAt(index);
+        index++;
+        setTimeout(typeWriter, typingSpeed);
       }
-  }
-
-  typeWriter();
-
-  // After creating blocks, organize them into groups
-  const blocks = document.querySelectorAll('.block:not(.b1):not(.b2)');
-  
-  // Create side panel for content groups if it doesn't exist
-  if (!document.getElementById('side-panel')) {
-    createSidePanel();
-  }
-  
-  // Hide all content blocks initially (they'll be shown in the side panel)
-  blocks.forEach(block => {
-    block.style.display = 'none';
-  });
-  
-  // Distribute blocks into 5 groups
-  const groupSize = Math.ceil(blocks.length / 5);
-  
-  let currentGroup = -1;
-  let groupContainer;
-  
-  blocks.forEach((block, index) => {
-    if (index % groupSize === 0) {
-      currentGroup++;
-      groupContainer = document.createElement('div');
-      groupContainer.className = 'content-group';
-      groupContainer.id = `content-group-${currentGroup}`;
-      groupContainer.style.display = 'none';
-      document.getElementById('side-panel-content').appendChild(groupContainer);
     }
-    
-    // Clone the block and add to the group
-    const clonedBlock = block.cloneNode(true);
-    clonedBlock.style.display = 'block';
-    clonedBlock.style.width = '100%';
-    clonedBlock.style.minHeight = 'auto';
-    groupContainer.appendChild(clonedBlock);
-  });
+
+    typeWriter();
+  }
 
 })
 
@@ -999,7 +963,15 @@ function createTopLevelButtons() {
   `;
   
   // Define irregular positions for the buttons (percentage-based)
-  const buttonPositions = [
+  // Adjust positions to be more centered for better mobile display
+  const isMobile = window.innerWidth <= 768;
+  const buttonPositions = isMobile ? [
+    { top: '20%', left: '30%' },
+    { top: '35%', left: '65%' },
+    { top: '55%', left: '25%' },
+    { top: '45%', left: '50%' },
+    { top: '70%', left: '60%' }
+  ] : [
     { top: '15%', left: '25%' },
     { top: '30%', left: '70%' },
     { top: '60%', left: '20%' },
@@ -1027,8 +999,8 @@ function createTopLevelButtons() {
     const marker = document.createElement('div');
     marker.className = 'map-marker';
     marker.style.cssText = `
-      width: 30px;
-      height: 30px;
+      width: ${isMobile ? '24px' : '30px'};
+      height: ${isMobile ? '24px' : '30px'};
       background-color: ${contentType.color};
       border-radius: 50% 50% 50% 0;
       transform: rotate(-45deg);
@@ -1041,8 +1013,8 @@ function createTopLevelButtons() {
     const markerInner = document.createElement('div');
     markerInner.className = 'map-marker-inner';
     markerInner.style.cssText = `
-      width: 15px;
-      height: 15px;
+      width: ${isMobile ? '12px' : '15px'};
+      height: ${isMobile ? '12px' : '15px'};
       background-color: white;
       border-radius: 50%;
       position: absolute;
@@ -1062,9 +1034,9 @@ function createTopLevelButtons() {
       transform: translateX(-50%);
       background-color: rgba(0, 0, 0, 0.7);
       color: white;
-      padding: 4px 8px;
+      padding: ${isMobile ? '3px 6px' : '4px 8px'};
       border-radius: 4px;
-      font-size: 12px;
+      font-size: ${isMobile ? '10px' : '12px'};
       font-weight: bold;
       white-space: nowrap;
       margin-top: 5px;
@@ -1077,7 +1049,7 @@ function createTopLevelButtons() {
     const markerShadow = document.createElement('div');
     markerShadow.className = 'map-marker-shadow';
     markerShadow.style.cssText = `
-      width: 15px;
+      width: ${isMobile ? '12px' : '15px'};
       height: 3px;
       background-color: rgba(0, 0, 0, 0.3);
       border-radius: 50%;
@@ -1093,14 +1065,14 @@ function createTopLevelButtons() {
     markerContainer.addEventListener('mouseover', () => {
       marker.style.transform = 'rotate(-45deg) scale(1.2)';
       markerLabel.style.opacity = '1';
-      markerShadow.style.width = '20px';
+      markerShadow.style.width = isMobile ? '16px' : '20px';
       markerShadow.style.opacity = '0.5';
     });
     
     markerContainer.addEventListener('mouseout', () => {
       marker.style.transform = 'rotate(-45deg) scale(1)';
       markerLabel.style.opacity = '0';
-      markerShadow.style.width = '15px';
+      markerShadow.style.width = isMobile ? '12px' : '15px';
       markerShadow.style.opacity = '0.3';
     });
     
@@ -1144,6 +1116,13 @@ function createTopLevelButtons() {
     .map-marker-container:nth-child(5) .map-marker {
       animation-delay: 0.4s;
     }
+    
+    /* Responsive styles for map markers */
+    @media (max-width: 768px) {
+      .map-marker-container {
+        transform: translate(-50%, -100%) scale(0.9);
+      }
+    }
   `;
   document.head.appendChild(style);
   
@@ -1159,6 +1138,17 @@ function createTopLevelButtons() {
   
   // Add lights to the scene instead of markers
   createVisualMapMarkers(contentTypes);
+  
+  // Add window resize listener to adjust marker positions
+  window.addEventListener('resize', () => {
+    // Remove existing buttons
+    const existingButtons = document.getElementById('content-type-buttons');
+    if (existingButtons) {
+      existingButtons.remove();
+    }
+    // Recreate buttons with new positions
+    createTopLevelButtons();
+  });
 }
 
 // Create visual markers on the map (no interaction)
@@ -1306,9 +1296,21 @@ function showContentByType(contentType, buttonIndex) {
       const card = document.createElement('div');
       card.className = 'card';
       
+      // Check if we're on mobile
+      const isMobile = window.innerWidth <= 768;
+      
       // Create card inner container
       const cardInner = document.createElement('div');
       cardInner.className = 'card__inner';
+      
+      // On mobile, make card height auto to avoid scrolling
+      if (isMobile) {
+        card.style.height = 'auto';
+        card.style.minHeight = '90vh';
+        cardInner.style.position = 'relative';
+        cardInner.style.height = 'auto';
+        cardInner.style.minHeight = '90vh';
+      }
       
       // Create content container
       const cardContent = document.createElement('div');
@@ -1318,14 +1320,16 @@ function showContentByType(contentType, buttonIndex) {
       const clonedBlock = block.cloneNode(true);
       clonedBlock.style.display = 'block';
       clonedBlock.style.width = '100%';
-      clonedBlock.style.height = '100%';
+      clonedBlock.style.height = 'auto';
       clonedBlock.style.minHeight = 'auto';
+      clonedBlock.style.marginTop = '0';
+      clonedBlock.style.paddingTop = '0';
       
       // Optimize media elements for card display
       const images = clonedBlock.querySelectorAll('img');
       images.forEach(img => {
         img.style.maxWidth = '100%';
-        img.style.maxHeight = '70vh';
+        img.style.maxHeight = isMobile ? '50vh' : '70vh';
         img.style.objectFit = 'contain';
         img.style.margin = '0 auto';
       });
@@ -1334,7 +1338,7 @@ function showContentByType(contentType, buttonIndex) {
       videos.forEach(video => {
         video.style.width = '100%';
         video.style.height = 'auto';
-        video.style.maxHeight = '70vh';
+        video.style.maxHeight = isMobile ? '50vh' : '70vh';
         video.style.margin = '0 auto';
       });
       
@@ -1344,7 +1348,7 @@ function showContentByType(contentType, buttonIndex) {
         const pdfEmbeds = clonedBlock.querySelectorAll('embed[type="application/pdf"]');
         pdfEmbeds.forEach(embed => {
           embed.style.width = '100%';
-          embed.style.height = '70vh';
+          embed.style.height = isMobile ? '50vh' : '70vh';
           embed.style.display = 'block';
           embed.style.margin = '0 auto';
           // Add attributes to improve PDF viewing
@@ -1358,7 +1362,7 @@ function showContentByType(contentType, buttonIndex) {
         const pdfLists = clonedBlock.querySelectorAll('.list');
         pdfLists.forEach(list => {
           list.style.width = '100%';
-          list.style.height = '70vh';
+          list.style.height = isMobile ? '50vh' : '70vh';
           const embedInList = list.querySelector('embed');
           if (embedInList) {
             embedInList.style.width = '100%';
@@ -1375,14 +1379,15 @@ function showContentByType(contentType, buttonIndex) {
         const pdfLinks = clonedBlock.querySelectorAll('.name a');
         pdfLinks.forEach(link => {
           link.style.display = 'inline-block';
-          link.style.margin = '10px auto';
-          link.style.padding = '8px 16px';
+          link.style.margin = isMobile ? '5px auto' : '10px auto';
+          link.style.padding = isMobile ? '6px 12px' : '8px 16px';
           link.style.backgroundColor = '#2196f3';
           link.style.color = 'white';
           link.style.textDecoration = 'none';
           link.style.borderRadius = '4px';
           link.style.fontWeight = 'bold';
           link.style.textAlign = 'center';
+          link.style.fontSize = isMobile ? '14px' : '16px';
           link.target = '_blank';
         });
         
@@ -1402,8 +1407,8 @@ function showContentByType(contentType, buttonIndex) {
             viewFullScreenBtn.textContent = 'View in Full Screen';
             viewFullScreenBtn.style.cssText = `
               display: inline-block;
-              margin: 5px auto 10px;
-              padding: 8px 16px;
+              margin: ${isMobile ? '5px auto' : '10px auto'};
+              padding: ${isMobile ? '6px 12px' : '8px 16px'};
               background-color: #4CAF50;
               color: white;
               text-decoration: none;
@@ -1411,6 +1416,7 @@ function showContentByType(contentType, buttonIndex) {
               font-weight: bold;
               text-align: center;
               margin-left: 10px;
+              font-size: ${isMobile ? '14px' : '16px'};
             `;
             nameDiv.appendChild(viewFullScreenBtn);
           }
@@ -1459,361 +1465,69 @@ function showContentByType(contentType, buttonIndex) {
 
 // Create side panel structure
 function createSidePanel() {
-  // Remove existing panel if any
-  const existingPanel = document.getElementById('side-panel');
-  if (existingPanel) {
-    existingPanel.remove();
+  // Create side panel if it doesn't exist
+  if (!document.getElementById('side-panel')) {
+    const sidePanel = document.createElement('div');
+    sidePanel.id = 'side-panel';
+    document.body.appendChild(sidePanel);
+    
+    // Create close button
+    const closeButton = document.createElement('button');
+    closeButton.id = 'close-panel';
+    closeButton.innerHTML = '×';
+    closeButton.addEventListener('click', closeSidePanel);
+    sidePanel.appendChild(closeButton);
+    
+    // Create content container
+    const contentContainer = document.createElement('div');
+    contentContainer.id = 'side-panel-content';
+    sidePanel.appendChild(contentContainer);
+    
+    // Create cards container
+    const cardsContainer = document.createElement('div');
+    cardsContainer.className = 'cards';
+    contentContainer.appendChild(cardsContainer);
+    
+    // Add swipe hint
+    const swipeHint = document.createElement('div');
+    swipeHint.className = 'swipe-hint';
+    swipeHint.innerHTML = '→';
+    contentContainer.appendChild(swipeHint);
+    
+    // Hide swipe hint after 5 seconds
+    setTimeout(() => {
+      swipeHint.style.display = 'none';
+    }, 5000);
   }
   
-  // Create new side panel
-  const sidePanel = document.createElement('div');
-  sidePanel.id = 'side-panel';
-  sidePanel.innerHTML = `
-      <button id="close-panel">&times;</button>
-    <div id="side-panel-content"></div>
-  `;
-  
-  document.body.appendChild(sidePanel);
-  
-  // Add event listener to close button
-  document.getElementById('close-panel').addEventListener('click', closeSidePanel);
-  
-  // Add CSS
-  const style = document.createElement('style');
-  style.textContent = `
-    #side-panel {
-      position: fixed;
-      top: 0;
-      right: -100vw;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.95);
-      z-index: 2000;
-      transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      color: white;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
+  // When opening the side panel, ensure it's properly positioned
+  const sidePanel = document.getElementById('side-panel');
+  if (sidePanel) {
+    // Show the panel
+    sidePanel.style.right = '0';
     
-    #close-panel {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: rgba(0, 0, 0, 0.5);
-      border: none;
-      color: white;
-      font-size: 28px;
-      cursor: pointer;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      transition: background 0.3s ease;
-      z-index: 10;
-    }
-    
-    #close-panel:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-    
-    #side-panel-content {
-      flex: 1;
-      overflow: hidden;
-      position: relative;
-      height: 100%;
-    }
-    
-    .cards {
-      width: 100%;
-      height: 100%;
-      padding: 0;
-      box-sizing: border-box;
-      overflow-x: auto;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      scroll-snap-type: x mandatory;
-      scrollbar-width: none; /* Firefox */
-    }
-    
-    .cards::-webkit-scrollbar {
-      display: none; /* Chrome, Safari, Opera */
-    }
-    
-    .card {
-      flex: 0 0 auto;
-      width: 90%;
-      height: 100vh;
-      position: relative;
-      scroll-snap-align: center;
-    }
-    
-    .card:first-child {
-      margin-left: 5%;
-    }
-    
-    .card:last-child {
-      margin-right: 5%;
-    }
-    
-    .card__inner {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(30, 30, 30, 0.7);
-      overflow: auto;
-      padding: 20px;
-      box-sizing: border-box;
-      transform-origin: center left;
-      transition: transform 0.3s ease, filter 0.3s ease;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-    }
-    
-    .card__content {
-      width: 100%;
-      height: 100%;
-      padding: 0;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      overflow: auto;
-    }
-    
-    .card__content .block {
-      width: 100%;
-      height: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      overflow: visible;
-    }
-    
-    /* PDF specific styling */
-    .card__content .block.Attachment {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .card__content .block.Attachment .list {
-      flex: 1;
-      margin-bottom: 10px;
-    }
-    
-    .card__content img {
-      max-width: 100%;
-      max-height: 70vh;
-      object-fit: contain;
-      margin: 0 auto;
-    }
-    
-    .card__content iframe,
-    .card__content video {
-      width: 100%;
-      height: auto;
-      max-height: 70vh;
-      object-fit: contain;
-      margin: 0 auto;
-    }
-    
-    .card__content embed[type="application/pdf"] {
-      width: 100%;
-      height: 70vh;
-      display: block;
-      margin: 0 auto;
-    }
-    
-    .card__content .list {
-      width: 100%;
-      height: 70vh;
-      display: block;
-    }
-    
-    .card__content .list embed {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-    
-    .swipe-hint {
-      position: absolute;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: white;
-      font-size: 40px;
-      animation: pulse 1.5s infinite;
-      pointer-events: none;
-      opacity: 0.7;
-      z-index: 5;
-    }
-    
-    @keyframes pulse {
-      0% { opacity: 0.2; }
-      50% { opacity: 0.7; }
-      100% { opacity: 0.2; }
-    }
-    
-    /* Style for content type buttons */
-    #content-type-buttons button {
-      background-color: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(3px);
-      transition: all 0.3s ease;
-    }
-    
-    #content-type-buttons button:hover {
-      background-color: rgba(0, 0, 0, 0.8);
-      transform: translate(-50%, -50%) scale(1.1) !important;
-    }
-    
-    /* Ensure buttons are visible on the map */
-    #viewport {
-      overflow: visible !important;
-    }
-    
-    /* When side panel is open, make buttons less visible */
-    #side-panel:not([style*="right: -100vw"]) ~ #viewport #content-type-buttons button {
-      opacity: 0.3;
-    }
-    
-    .card__content .name {
-      width: 100%;
-      text-align: center;
-      margin-top: 10px;
-    }
-    
-    .card__content .name a {
-      display: inline-block;
-      margin: 10px auto;
-      padding: 8px 16px;
-      background-color: #2196f3;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-      font-weight: bold;
-      text-align: center;
-    }
-    
-    .card__content .name a:nth-child(2) {
-      background-color: #4CAF50;
-    }
-    
-    .card__content .name a:hover {
-      background-color: #0d8aee;
-    }
-    
-    .card__content .name a:nth-child(2):hover {
-      background-color: #3d8b40;
-    }
-    
-    /* Responsive styles for small screens */
-    @media (max-width: 768px) {
-      .card__inner {
-        padding: 10px;
-      }
+    // Ensure cards are visible without scrolling
+    setTimeout(() => {
+      const cards = document.querySelectorAll('.card');
+      cards.forEach((card, index) => {
+        // Reset any transforms that might be affecting visibility
+        card.style.transform = 'translateY(0)';
+        card.style.paddingTop = index === 0 ? '0' : '10px';
+        
+        const cardInner = card.querySelector('.card__inner');
+        if (cardInner) {
+          cardInner.style.transform = 'scale(1)';
+          cardInner.style.filter = 'brightness(1)';
+        }
+      });
       
-      .card__content embed[type="application/pdf"],
-      .card__content .list,
-      .card__content iframe,
-      .card__content video,
-      .card__content img {
-        height: 60vh;
-        max-height: 60vh;
+      // Scroll to the first card to ensure it's visible
+      const cardsContainer = document.querySelector('.cards');
+      if (cardsContainer) {
+        cardsContainer.scrollLeft = 0;
       }
-      
-      #close-panel {
-        top: 10px;
-        right: 10px;
-        width: 36px;
-        height: 36px;
-        font-size: 24px;
-      }
-      
-      .map-marker {
-        width: 24px !important;
-        height: 24px !important;
-      }
-      
-      .map-marker-inner {
-        width: 12px !important;
-        height: 12px !important;
-      }
-      
-      .map-marker-label {
-        font-size: 10px !important;
-        padding: 3px 6px !important;
-      }
-      
-      .card__content .name a {
-        padding: 6px 12px;
-        font-size: 14px;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .card__content embed[type="application/pdf"],
-      .card__content .list,
-      .card__content iframe,
-      .card__content video,
-      .card__content img {
-        height: 50vh;
-        max-height: 50vh;
-      }
-      
-      .card__inner {
-        padding: 8px;
-      }
-      
-      .map-marker {
-        width: 20px !important;
-        height: 20px !important;
-      }
-      
-      .map-marker-inner {
-        width: 10px !important;
-        height: 10px !important;
-      }
-      
-      .card__content .name a {
-        padding: 5px 10px;
-        font-size: 12px;
-        margin: 5px auto;
-      }
-    }
-    
-    /* Handle orientation changes */
-    @media (orientation: landscape) and (max-height: 500px) {
-      .card__content embed[type="application/pdf"],
-      .card__content .list {
-        height: 80vh;
-      }
-      
-      .card__inner {
-        padding: 5px;
-      }
-      
-      #close-panel {
-        top: 5px;
-        right: 5px;
-      }
-    }
-  `;
-  
-  document.head.appendChild(style);
+    }, 100); // Small delay to ensure DOM is updated
+  }
 }
 
 // Function to close the side panel
@@ -1829,20 +1543,37 @@ function setupCardStackEffect() {
   const cardsContainer = document.querySelector('.cards');
   if (!cardsContainer) return;
   
-  const cards = cardsContainer.querySelectorAll('.card');
+  const cards = document.querySelectorAll('.card');
+  if (!cards.length) return;
   
+  // Set container properties
+  cardsContainer.style.setProperty('--cards-count', cards.length);
+  cardsContainer.style.setProperty('--card-height', `${cards[0].clientHeight}px`);
+  
+  // Make sure first card is fully visible without scrolling
+  if (cards[0]) {
+    const firstCardInner = cards[0].querySelector('.card__inner');
+    if (firstCardInner) {
+      firstCardInner.style.transform = 'scale(1)';
+      firstCardInner.style.filter = 'brightness(1)';
+    }
+    cards[0].style.paddingTop = '0';
+  }
+  
+  // Initialize other cards with minimal padding
   Array.from(cards).forEach((card, index) => {
-    if (index === cards.length - 1) return;
+    if (index === 0) return; // Skip first card as we already set it
     
-    const toScale = 1 - (cards.length - 1 - index) * 0.05;
-    const nextCard = cards[index + 1];
+    // Use minimal padding to avoid pushing content down
+    const offsetTop = 10;
+    card.style.paddingTop = `${offsetTop}px`;
+    
     const cardInner = card.querySelector('.card__inner');
-    
-    // Create a scroll observer for card animations
-    createScrollObserver(nextCard, cardsContainer, (ratio) => {
-        cardInner.style.transform = `scale(${1 - (1 - toScale) * ratio})`;
-        cardInner.style.filter = `brightness(${1 - (1 - 0.6) * ratio})`;
-      });
+    if (cardInner) {
+      // Ensure card is visible
+      cardInner.style.transform = 'scale(1)';
+      cardInner.style.filter = 'brightness(1)';
+    }
   });
 }
 

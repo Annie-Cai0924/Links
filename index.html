@@ -6,10 +6,11 @@
     <title>AreNa</title>
     <script src="./asset/lib/gsap.min.js"></script>
     <script src="./asset/lib/Rx.min.js"></script>
+    <script src="./asset/aat.min.js"></script>
     <link rel="stylesheet" href="./asset/style.css">
 </head>
 <body>
-    <!-- <svg id="stage" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000;" ></svg> -->
+    <svg id="stage" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;" ></svg>
     <div class="wrap">
 
         <div class="row">
@@ -26,7 +27,7 @@
                     <div class="r">Links</div>
                 </div>
                 <div class="last">
-                    <a id="channel-link">See on Are.na ↗</a>
+                    <a id="channel-link" target="_blank">See on Are.na ↗</a>
                 </div>
             </div>
             <div class="block b2">
@@ -63,16 +64,25 @@
     <script src="./asset/lib/TweenMax.min.js"></script>
     <script src="./asset/lib/OrbitControls.js"></script>
     <script src="./asset/arena.js"></script>
+    <script src="./asset/script.js"></script>
     <script>
-        // 在 asset/arena.js 中添加
         document.addEventListener('DOMContentLoaded', function() {
-            const blocks = document.querySelectorAll('.block');
-            const windowHeight = window.innerHeight;
+            // Make only the first two blocks visible initially
+            setTimeout(function() {
+                const blocks = document.querySelectorAll('.block.b1, .block.b2');
+                blocks.forEach(block => {
+                    block.classList.add('visible');
+                });
+            }, 500);
 
+            // Setup visibility check for scrolling - only for the first two blocks
             function checkVisibility() {
+                const blocks = document.querySelectorAll('.block.b1, .block.b2');
+                const viewportHeight = window.innerHeight;
+                
                 blocks.forEach(block => {
                     const blockTop = block.getBoundingClientRect().top;
-                    if (blockTop < windowHeight && blockTop > -windowHeight) {
+                    if (blockTop < viewportHeight + 200 && blockTop > -block.offsetHeight) {
                         block.classList.add('visible');
                     } else {
                         block.classList.remove('visible');
@@ -81,12 +91,9 @@
             }
 
             window.addEventListener('scroll', checkVisibility);
-            window.addEventListener('resize', () => {
-                windowHeight = window.innerHeight;
-                checkVisibility();
-            });
+            window.addEventListener('resize', checkVisibility);
 
-            // 初始检查
+            // Initial check
             checkVisibility();
         });
     </script>
