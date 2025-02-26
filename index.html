@@ -1,104 +1,294 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AreNa</title>
-    <script src="./asset/lib/gsap.min.js"></script>
-    <script src="./asset/lib/Rx.min.js"></script>
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.5.12/Rx.min.js"></script>
     <link rel="stylesheet" href="./asset/style.css">
 </head>
 <body>
-    <svg id="stage" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000;"></svg>
+    <svg id="stage" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; pointer-events: none;"></svg>
     <div class="wrap">
 
-        <div class="row cards">
-            <div class="block b1 card">
-                <div class="card__inner">
-                    <div class="title">The Art and Function of</div>
-                    <div class="contentmap">
-                        <div class="letter-m"></div>
-                        <div class="letter-a"></div>
-                        <div class="letter-p"></div>
-                        <div class="letter-s"></div>
-                    </div>
-                    <div class="links">
-                        <div class="l">Yaxuan Cai</div>
-                        <div class="r">Links</div>
-                    </div>
-                    <div class="last">
-                        <a id="channel-link">See on Are.na ↗</a>
-                    </div>
+        <div class="row">
+            <div class="block b1">
+                <div class="title">The Art and Function of</div>
+                <div class="contentmap">
+                    <div class="letter-m"></div>
+                    <div class="letter-a"></div>
+                    <div class="letter-p"></div>
+                    <div class="letter-s"></div>
                 </div>
-                
+                <div class="links">
+                    <div class="l">Yaxuan Cai</div>
+                    <div class="r">Links</div>
+                </div>
+                <div class="last">
+                    <a id="channel-link">See on Are.na ↗</a>
+                </div>
             </div>
-            <div class="block b2 card">
-                <div class="card__inner">
-                    <div class="desc">
-                        Maps are more than navigational tools—they are stories of exploration, representation, and imagination. This collection delves into the diverse world of maps, from ancient cartography to modern data visualizations. It highlights how maps shape our understanding of space, identity, and history while showcasing artistic, functional, and speculative approaches to mapping.
-                    </div>
-                    <div id="stats">
-                        <h1>Select an area</h1>
-                        <a id="map-link" target="_blank" href="https://www.google.ca/maps/place/27.98785,86.9250261">Map</a>    
-                        <form>
-                            <select name="geo">
-                            <option value="athabasca">Athabasca Glacier</option>
-                            <option value="coldeliseran">Col de l'Iseran</option>
-                            <option value="everest" selected="">Mount Everest</option>
-                            <option value="franzjosefglacier">Franz Josef Glacier</option>
-                            <option value="grouse">Grouse Grind</option>
-                            <option value="jotunheimen">Jotunheimen</option>
-                            <option value="k2">K2</option>
-                            <option value="kangchenjunga">Kangchenjunga</option>
-                            <option value="everest-valley">Khumbu Glacier</option>
-                            <option value="lakecomo">Lake Como</option>
-                            <option value="petra">Petra</option>
-                            <option value="sanfrancisco">San Francisco</option>
-                            <option value="valparaiso">Valparaíso</option>
-                            </select>
-                        </form> 
-                        <span id="loading"></span>
-                    </div>
-                    <div id="viewport"></div>
+            <div class="block b2">
+                <div class="desc">
+                    Maps are more than navigational tools—they are stories of exploration, representation, and imagination. This collection delves into the diverse world of maps, from ancient cartography to modern data visualizations. It highlights how maps shape our understanding of space, identity, and history while showcasing artistic, functional, and speculative approaches to mapping.
                 </div>
+                <div id="stats">
+                    <h1>Select an area</h1>
+                    <a id="map-link" target="_blank" href="https://www.google.ca/maps/place/27.98785,86.9250261">Map</a>    
+                    <form>
+                        <select name="geo">
+                        <option value="athabasca">Athabasca Glacier</option>
+                        <option value="coldeliseran">Col de l'Iseran</option>
+                        <option value="everest" selected="">Mount Everest</option>
+                        <option value="franzjosefglacier">Franz Josef Glacier</option>
+                        <option value="grouse">Grouse Grind</option>
+                        <option value="jotunheimen">Jotunheimen</option>
+                        <option value="k2">K2</option>
+                        <option value="kangchenjunga">Kangchenjunga</option>
+                        <option value="everest-valley">Khumbu Glacier</option>
+                        <option value="lakecomo">Lake Como</option>
+                        <option value="petra">Petra</option>
+                        <option value="sanfrancisco">San Francisco</option>
+                        <option value="valparaiso">Valparaíso</option>
+                        </select>
+                    </form> 
+                    <span id="loading"></span>
+                </div>
+                <div id="viewport"></div>
             </div>
         </div>
     </div>
+    <script defer src="./asset/bk.js"></script>
     <script src="./asset/lib/three.min.js"></script>
     <script src="./asset/lib/TweenMax.min.js"></script>
     <script src="./asset/lib/OrbitControls.js"></script>
-    <script src="./asset/lib/aat.min.js"></script>
-    <script src="./asset/arena.js"></script>
+    
     <script>
-        // 在 asset/arena.js 中添加
-        document.addEventListener('DOMContentLoaded', function() {
-            const blocks = document.querySelectorAll('.block');
-            const windowHeight = window.innerHeight;
+        var scene = new THREE.Scene();
+        var viewport, renderer, camera, controls, particleDistance, centerPoint = {};
+        var transitionDuration = 1000;
+        var baseURL = '';
+        var mountainGeometry, mountainParticles;
+        var loader = new THREE.JSONLoader();
+        var pointsPlot = new Array();
+        var geoname;
+        THREE.ImageUtils.crossOrigin = ""
+        THREE.ImageUtils.crossOrigin = "anonymous"
+        init();
 
-            function checkVisibility() {
-                blocks.forEach(block => {
-                    const blockTop = block.getBoundingClientRect().top;
-                    if (blockTop < windowHeight && blockTop > -windowHeight) {
-                        block.classList.add('visible');
-                    } else {
-                        block.classList.remove('visible');
-                    }
-                });
+
+        function init() {
+            baseURL = 'https://s3.ca-central-1.amazonaws.com/kevinnewcombe/three-terrain/';
+        // set up the scene and camera
+        scene = new THREE.Scene();
+        var WIDTH = window.innerWidth * 0.8,
+            HEIGHT = window.innerHeight;
+
+        viewport = document.getElementById('viewport');
+
+        renderer = new THREE.WebGLRenderer();
+        renderer = new THREE.WebGLRenderer({ antialias: 0, clearAlpha: 0, alpha:true });
+        renderer.setSize(WIDTH, HEIGHT);
+        renderer.setClearColor( 0x000000, 0 ); // the default
+        renderer.shadowMap.enabled = true;
+        viewport.appendChild(renderer.domElement);
+        window.addEventListener( 'resize', onWindowResize, false );
+
+        scene.fog = new THREE.Fog( 0x111111, 22000, 25000 );
+
+        /* ************** */
+        /*                */
+        /*     camera     */
+        /*                */
+        /* ************** */
+        camera = new THREE.PerspectiveCamera(10, WIDTH / HEIGHT, 0.1, 200000);
+        camera.position.set(0, 10000, -20000 );
+        scene.add(camera);
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.25; 
+        createGroundPlane();
+        animates();
+        }
+
+        function createGroundPlane(){
+        mountainGeometry = new THREE.Geometry();
+        mountainGeometry.dynamic = true;
+        mountainGeometry.__dirtyVertices = true;
+        mountainGeometry.verticesNeedUpdate = true;
+
+        var material = new THREE.PointsMaterial();
+        material.sizeAttenuation = false;
+        centerX = 0;
+        centerZ = 0;
+
+        totalX = 150;
+        totalZ = 150;
+
+        particleDistance = 25;
+        for ( var x = 0; x < totalX; x ++ ) {
+            xplot = x - Math.round((totalX-1)/2);
+            zArray = new Array();
+            for ( var z = 0; z < totalZ; z ++ ) {
+            var vertex = new THREE.Vector3();
+            vertex.x = x*particleDistance - particleDistance*(totalX-1)/2;
+            vertex.z = z*particleDistance - particleDistance*(totalZ-1)/2;
+            zplot = z - Math.round((totalZ-1)/2);
+            zArray[zplot] = vertex;
+            mountainGeometry.vertices.push( vertex );
             }
+            pointsPlot[xplot] = zArray;
+        }
+        
+        mountainParticles = new THREE.Points( mountainGeometry, material );
+        mountainParticles.sortParticles = true;
+        mountainParticles.position.y = -700;
+        scene.add( mountainParticles );
+        loadGeography('everest');
+        }
 
-            window.addEventListener('scroll', checkVisibility);
-            window.addEventListener('resize', () => {
-                windowHeight = window.innerHeight;
-                checkVisibility();
-            });
+        function loadGeography(filename){
+        e = document.querySelector('select[name="geo"]');
+        select = e.options[e.selectedIndex].value;
+        if(select){
+            filename = select;
+        } 
+        var request = new XMLHttpRequest();
+        request.open('GET', baseURL+'_terrain/'+filename+'.json?v=2');
+        request.onprogress = function(evt){
+            document.getElementById('loading').innerHTML = Math.round((evt.loaded / evt.total)*100)+'%';
+        }
+        request.onload = function() {
+            document.getElementById('loading').innerHTML = '';
+            if (request.status >= 200 && request.status < 400) {
+            var data = JSON.parse(request.responseText);
+            centerPoint.lat = data.boundaries[2] + (data.boundaries[0] - data.boundaries[2]) / 2;
+            centerPoint.lng = data.boundaries[3] + (data.boundaries[1] - data.boundaries[3]) / 2;
+            document.getElementById('map-link').setAttribute('href', 'https://www.google.ca/maps/place/'+centerPoint.lat+','+centerPoint.lng);
+            console.log(centerPoint.lat+','+centerPoint.lng);
+            for(var i = 0; i<data.coords.length; i++){
+                m = data.coords[i];
+                x = m[0];
+                y = m[1];
+                z = m[2];
 
-            // 初始检查
-            checkVisibility();
-        });
+                v = pointsPlot[x][z];
+
+                target = { 
+                y:(y - data.lowest_point)*particleDistance, 
+                ease:Power3.easeOut
+                }
+
+                tween = TweenMax.to(v, 1.5, target );
+                target.onUpdate = function () {
+                mountainGeometry.verticesNeedUpdate = true;
+                };  
+            }
+            } else {
+            alert('Sorry, there was an error loading the geography.');
+            }
+        };
+
+        request.onerror = function() {
+            alert('Sorry, there was an error loading the geography.');
+        };
+        request.send();
+        }
+
+        function onWindowResize( event ) {
+        SCREEN_HEIGHT = window.innerHeight;
+        SCREEN_WIDTH  = window.innerWidth;
+        renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+        camera.aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
+        camera.updateProjectionMatrix();
+        }
+
+        function animates() {
+            requestAnimationFrame(animates);
+            renderer.render(scene, camera);
+            controls.update();
+        }
+
+        document.addEventListener('DOMContentLoaded',function() {
+        document.querySelector('select[name="geo"]').onchange=loadGeography;
+        },false);
     </script>
+
     <script>
 
+        let channelSlug = 'the-art-and-function-of-maps'
+        fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-store' })
+        .then((response) => response.json()) 
+        .then((data) => { 
+            // 分类类型
+            const categorizedBlocks = {};
+            data.contents.reverse().forEach((block) => {
+                if (!categorizedBlocks[block.class]) {
+                    categorizedBlocks[block.class] = [];
+                }
+                categorizedBlocks[block.class].push(block);
+            });
+            console.log(232,categorizedBlocks);
+            for (const category in categorizedBlocks) {
+                const blocks = categorizedBlocks[category];
+                console.log(blocks);
+                const rowElement = document.querySelector('.row');
+
+                blocks.forEach((block) => {
+                    console.log(block)
+                    const newDiv = document.createElement('div');
+                    newDiv.className = 'block ' + block.class;
+                    let blockItem = '';
+                    if (block.class === 'Link') {
+                        categoryId = 'links';
+                        blockItem = `
+                            <div class="show">  <img src="${ block.image.original.url }" alt="${ block.title }"></div>
+                            <div class="overlay">
+                                <p class="title">${block.title}</p>
+                                <p class="descption">${block.description}</p>
+                                <p class="exten"><a href="${ block.source.url }">See the original ↗</a></p>
+                            </div>`;
+
+                    } else if (block.class === 'Image') {
+                        categoryId = 'images';
+                        blockItem = `
+                            <div class="descc">${block.description}</div>
+                            <div class="info">
+                                <div class="name">${block.title}</div>
+                                <div class="cont">
+                                    <img src="${ block.image.original.url }" alt="${ block.title }">
+                                </div>
+                            </div>
+                   
+                            `;
+
+                    } else if (block.attachment && block.attachment.content_type.includes('pdf')) {
+                        categoryId = 'pdfs';
+                        blockItem = `
+                            <div class="list"><embed src="${ block.attachment.url }" type="application/pdf" ></div>
+                            <div class="name"> <p><a href="${ block.attachment.url }" target="_blank">Download PDF →</a></p></div>
+                        `;
+
+                    } else if (block.embed && block.embed.type.includes('rich')) {
+                        categoryId = 'audios';
+                        blockItem = ` <div > 897
+                                ${ block.embed.html } </div >`; 897
+
+                    } else if (block.class == 'Text') {
+                        categoryId = 'text'
+                        blockItem = `
+                                        <blockquote>${ block.content }</blockquote>
+                                    `
+                    }
+                    newDiv.innerHTML = blockItem 
+                    rowElement.appendChild(newDiv);
+                })
+            }
+     
+        })
     </script>
+    <script src="./asset/lib/2.js"></script>
 </body>
 </html>
