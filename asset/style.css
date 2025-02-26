@@ -247,7 +247,6 @@ select:focus{
 		margin: 4vh  auto;
 		width: 100vw !important;
 	}
-	
 	.Image .info{
 		display: flex;
 		flex-direction: column;
@@ -315,7 +314,7 @@ select:focus{
 		display: none !important;
 	}
 	
-
+	
 	.Text {
 		width: 100vw !important;
 		text-align: center;
@@ -688,7 +687,7 @@ select:focus{
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 80%;
+    width: 100%;
     overflow: visible !important;
 }
 
@@ -789,10 +788,6 @@ select:focus{
         max-height: 60vh;
     }
     
-	.descc{
-		font-size: 16px;
-	}
-
     #close-panel {
         top: 10px;
         right: 10px;
@@ -878,11 +873,6 @@ select:focus{
         max-height: 50vh;
     }
     
-.desc{
-	font-size: 20px;
-	line-height: 26px;
-}
-
     .card__inner {
         padding: 8px;
     }
@@ -928,25 +918,6 @@ select:focus{
     padding-top: 0;
 }
 
-.links {
-	display: flex;
-	flex-direction: column; /* 竖向排列 */
-	align-items: center; /* 可选：让元素水平居中 */
-  }
-
-.last{
-	font-size: 20px;
-}
-
-.l{
-	font-size: 20px;
-
-}
-
-.r{
-	font-size: 20px;
-}
-
 /* Center the map on all devices */
 #viewport {
     display: flex;
@@ -954,4 +925,67 @@ select:focus{
     align-items: center;
     width: 100%;
     overflow: visible !important;
+}
+
+/* 打字动画 */
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+/* 光标闪烁动画 */
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: #fff }
+}
+
+/* Center links in cards */
+.card__content a {
+    display: inline-block;
+    margin: 10px auto;
+    text-align: center;
+}
+
+/* Special styling for link content in cards when showing Links category */
+.card__content .Link a,
+.card__content .exten a {
+    display: block;
+    width: fit-content;
+    margin: 15px auto;
+    text-align: center;
+    padding: 8px 16px;
+    background-color: #2196f3;
+    color: white !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.card__content .Link a:hover,
+.card__content .exten a:hover {
+    background-color: #0d8aef;
+}
+
+/* Link container for proper centering */
+.link-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 10px 0;
+}
+
+/* Center all content in Link blocks */
+.card__content .Link div,
+.card__content .Link p {
+    text-align: center;
+    width: 100%;
+}
+
+/* Ensure link titles are centered and visible */
+.card__content .Link .overlay .title,
+.card__content .Link .overlay .descption {
+    margin: 10px auto;
+    max-width: 90%;
+    padding: 0 5%;
 }
