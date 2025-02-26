@@ -10,12 +10,14 @@ body {
     padding: 0;
     border-width: 0;
 }
+
 .wrap{
 	display: absolute;
 	top: 0;
 	left: 0;
 	z-index: 999;
 }
+/* Using the flexbox layout, the.row elements are arranged vertically in columns, with 1vh (viewport height units) between each element. */
 .row{
 	display: flex;
 	flex-direction: column;
@@ -73,6 +75,9 @@ body {
 	padding-bottom: 60px;
 }
 
+/* wanna use it to display MAPS in the title */
+/* find it on:https://codepen.io/josetxu/pen/JoPzNGv */
+/* Letter-a represents the letter "a" and uses A conic-gradient to fill the letter, giving it a geometric look. */
 .letter-a {
 	background: 
 		conic-gradient(from 153deg at 50% 0%, #2196F360 0 7.5%, #fff0 0 100%), 
@@ -82,7 +87,7 @@ body {
 
 
 
-
+/* Letter-m stands for the letter "m" and makes the letter look more three-dimensional by linear gradient. */
 .letter-m {
 	background: 
 		linear-gradient(-135deg, #ffffff00 0 50%, #4100d860 0 100%),
@@ -92,7 +97,7 @@ body {
 
 
 
-
+/* Letter-p stands for the letter "p" and gives the letter a specific filling effect by radial-gradient + conic-gradient. */
 .letter-p {
 	background: 
 		radial-gradient(circle at 25% 50%, #c600d860 0 71%, #fff0 calc(71% + 1px) 100%),
@@ -102,8 +107,8 @@ body {
 	background-size: 50% 70%, 100% 100%, 100% 100%;
 	background-position: 100% 0% , 0 0, 0 0;
 }
-
-
+/* 
+This section of code defines two pseudo-elements of.letter-s ::before and ::after, which will form the upper and lower parts of "s". */
 .letter-s::before,
 .letter-s::after {
 	content: "";
