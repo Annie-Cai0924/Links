@@ -854,3 +854,115 @@ select:focus{
     max-width: 90%;
     padding: 0 5%;
 }
+
+/* Responsive styles for small screens */
+@media (max-width: 768px) {
+    .card__inner {
+        padding: 10px;
+    }
+    
+    .card__content embed[type="application/pdf"],
+    .card__content .list,
+    .card__content iframe,
+    .card__content video,
+    .card__content img {
+        height: 60vh;
+        max-height: 60vh;
+    }
+    
+    #close-panel {
+        top: 10px;
+        right: 10px;
+        width: 36px;
+        height: 36px;
+        font-size: 24px;
+    }
+    
+    .map-marker {
+        width: 24px !important;
+        height: 24px !important;
+    }
+    
+    .map-marker-inner {
+        width: 12px !important;
+        height: 12px !important;
+    }
+    
+    /* updated the label on the mobile size */
+    .map-marker-label {
+        font-size: 10px !important;
+        padding: 4px 8px !important;
+        margin-top: 3px;
+        font-weight: 700;
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+    
+    /* Center map on mobile */
+    #viewport canvas {
+        width: 100vw !important;
+        height: 40vh !important;
+        margin: 0 auto;
+    }
+    
+    /* Make the block full width on mobile */
+    .row .block {
+        width: 100vw;
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    /* Adjust the side panel for mobile */
+    #side-panel {
+        padding-top: 50px; /* Add space at the top to prevent content from being hidden behind the close button */
+    }
+    
+    /* Make cards display content without needing to scroll initially */
+    .card {
+        height: auto;
+        min-height: 90vh;
+    }
+    
+    .card__inner {
+        position: relative;
+        height: auto;
+        min-height: 90vh;
+    }
+    
+    /* Ensure content is visible without scrolling */
+    .card__content {
+        padding-top: 20px;
+    }
+    
+    /* Adjust the stats container */
+    #stats {
+        padding: 10px;
+    }
+    
+    form {
+        width: 100%;
+    }
+    
+    select {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .map-marker-container {
+        transform: translate(-50%, -100%) scale(0.9);
+    }
+    
+    .desc{
+        font-size: 20px;
+        line-height: 26px;
+    }
+
+    .links{
+        display: flex;
+        flex-direction: column; 
+        align-items: center; 
+    }
+    
+    .l, .r {
+        font-size: 20px;
+    }
+}
