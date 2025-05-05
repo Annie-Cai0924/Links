@@ -561,6 +561,7 @@ select:focus{
     box-sizing: border-box;
     transform-origin: center left;
     transition: transform 0.3s ease, filter 0.3s ease;
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -623,17 +624,19 @@ select:focus{
     top: 100%;
     left: 50%;
     transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.85);
     color: white;
-    padding: 4px 8px;
+    padding: 5px 10px;
     border-radius: 4px;
     font-size: 12px;
     font-weight: bold;
     white-space: nowrap;
     margin-top: 5px;
-    opacity: 0;
+    opacity: 1;
     transition: opacity 0.3s ease;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    z-index: 1600;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .map-marker-shadow {
@@ -772,160 +775,6 @@ select:focus{
 .content-block a:hover {
     text-decoration: underline;
 }
-
-/* Responsive styles for small screens */
-@media (max-width: 768px) {
-    .card__inner {
-        padding: 10px;
-    }
-    
-    .card__content embed[type="application/pdf"],
-    .card__content .list,
-    .card__content iframe,
-    .card__content video,
-    .card__content img {
-        height: 60vh;
-        max-height: 60vh;
-    }
-    
-    #close-panel {
-        top: 10px;
-        right: 10px;
-        width: 36px;
-        height: 36px;
-        font-size: 24px;
-    }
-    
-    .map-marker {
-        width: 24px !important;
-        height: 24px !important;
-    }
-    
-    .map-marker-inner {
-        width: 12px !important;
-        height: 12px !important;
-    }
-    
-    .map-marker-label {
-        font-size: 10px !important;
-        padding: 3px 6px !important;
-    }
-    
-    /* Center map on mobile */
-    #viewport canvas {
-        width: 100vw !important;
-        height: 40vh !important;
-        margin: 0 auto;
-    }
-    
-    /* Make the block full width on mobile */
-    .row .block {
-        width: 100vw;
-        margin: 0;
-        border-radius: 0;
-    }
-    
-    /* Adjust the side panel for mobile */
-    #side-panel {
-        padding-top: 50px; /* Add space at the top to prevent content from being hidden behind the close button */
-    }
-    
-    /* Make cards display content without needing to scroll initially */
-    .card {
-        height: auto;
-        min-height: 90vh;
-    }
-    
-    .card__inner {
-        position: relative;
-        height: auto;
-        min-height: 90vh;
-    }
-    
-    /* Ensure content is visible without scrolling */
-    .card__content {
-        padding-top: 20px;
-    }
-    
-    /* Adjust the stats container */
-    #stats {
-        padding: 10px;
-    }
-    
-    form {
-        width: 100%;
-    }
-    
-    select {
-        width: 100%;
-        max-width: 100%;
-    }
-}
-
-/* Additional styles for very small screens */
-@media (max-width: 480px) {
-    .card__content embed[type="application/pdf"],
-    .card__content .list,
-    .card__content iframe,
-    .card__content video,
-    .card__content img {
-        height: 50vh;
-        max-height: 50vh;
-    }
-    
-    .card__inner {
-        padding: 8px;
-    }
-    
-    .map-marker {
-        width: 20px !important;
-        height: 20px !important;
-    }
-    
-    .map-marker-inner {
-        width: 10px !important;
-        height: 10px !important;
-    }
-    
-    .card__content .name a {
-        padding: 5px 10px;
-        font-size: 12px;
-        margin: 5px auto;
-    }
-    
-    /* Adjust title size for mobile */
-    .wrap .title {
-        font-size: 40px;
-        padding-top: 10vh;
-    }
-    
-    /* Center map markers better on mobile */
-    #content-type-buttons {
-        transform: scale(0.9);
-    }
-    
-    /* Ensure the viewport is centered */
-    #viewport {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-}
-
-    .desc{
-        font-size: 20px;
-        line-height: 26px;
-    }
-
-    .links{
-            display: flex;
-            flex-direction: column; 
-            align-items: center; 
-          }
-          .l, .r {
-            font-size: 20px;
-          
-    }
 
 /* Ensure card content is immediately visible without scrolling */
 .card__content .block {
