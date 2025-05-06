@@ -888,7 +888,7 @@ select:focus{
         height: 12px !important;
     }
     
-    /* updated the label on the mobile size */
+    /* 此处修改（5月份）- 优化移动设备上的标签样式 */
     .map-marker-label {
         font-size: 10px !important;
         padding: 4px 8px !important;
@@ -965,4 +965,98 @@ select:focus{
     .l, .r {
         font-size: 20px;
     }
+}
+
+/* Updated the style of mobile size */
+@media (max-width: 480px) {
+    .card__content embed[type="application/pdf"],
+    .card__content .list,
+    .card__content iframe,
+    .card__content video,
+    .card__content img {
+        height: 50vh;
+        max-height: 50vh;
+    }
+    
+    .card__inner {
+        padding: 10px;
+    }
+    
+    .map-marker {
+        width: 20px !important;
+        height: 20px !important;
+    }
+    
+    .map-marker-inner {
+        width: 10px !important;
+        height: 10px !important;
+    }
+    
+    .map-marker-label {
+        font-size: 9px !important;
+        padding: 3px 6px !important;
+        margin-top: 2px;
+        white-space: nowrap;
+        max-width: 80px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    
+    .card__content .name a {
+        padding: 5px 10px;
+        font-size: 20px;
+        margin: 5px auto;
+    }
+    
+    /* Adjust title size for mobile */
+    .wrap .title {
+        font-size: 40px;
+        padding-top: 10vh;
+    }
+    
+    /* Center map markers better on mobile */
+    #content-type-buttons {
+        transform: scale(0.9);
+    }
+    
+    /* Ensure the viewport is centered */
+    #viewport {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+/* Add navigation instruction styles */
+.map-instructions {
+  width: 100%;
+  text-align: center;
+  color: white;
+  margin-bottom: 15px;
+  position: relative;
+  z-index: 10;
+}
+
+.instruction-content {
+  background-color: rgba(0, 0, 0, 0.7);
+  display: inline-block;
+  padding: 15px 25px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.instruction-content h3 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+}
+
+.instruction-content p {
+  margin: 0;
+  font-size: 20px;
+  opacity: 0.9;
 }
