@@ -63,12 +63,18 @@ class Squiggle {
       settings.chunkLength = settings.length / 6;
       settings.progress = settings.chunkLength;
 
+      //strokeDasharray is like a "dotted line template" : draw a little first and then skip over a very long one
+    //Where should the Stroke as Hoffset be drawn? The control line should move forward slowly
       sqwig.style.strokeDasharray = `${settings.chunkLength}, ${settings.length + settings.chunkLength}`;
       sqwig.style.strokeDashoffset = `${settings.progress}`;
 
+      //Add this line to the stage (canvas) and record it in this.sqwigs
       this.stage.appendChild(sqwig);
       this.sqwigs.unshift({path: sqwig, settings: settings});
-
+//Make animations with GSAP
+//Let the lines gradually "draw from the beginning to the end"
+//The indices of different lines are not the same, so a delay is added
+//After the animation ends, set the status of the last line to ended and delete the line without taking up memory
       gsap.to(settings, {
           duration: settings.sections * 0.1,
           progress: -settings.length,
@@ -82,34 +88,53 @@ class Squiggle {
       });
   }
 
+  //path: The actual SVG line element
   update() {
+    //settings: Control the animation status of this line like progress, thickness, opacity
       this.sqwigs.forEach(set => {
+        //Set where the line starts to be drawn - the dynamic control line is how much has been drawn
           set.path.style.strokeDashoffset = `${set.settings.progress}`;
           set.path.style.strokeWidth = `${set.settings.width}px`;
           set.path.style.opacity = `${set.settings.opacity}`;
       });
   }
 
+  //Take out the coordinates of the initial point and the current forward direction 
+//These values determine where this line starts and in which direction it is drawn.
   createLine(settings) {
       let x = settings.x;
       let y = settings.y;
       let dx = settings.directionX;
       let dy = settings.directionY;
+      //path is an array of SVG path strings
+      //M x y means move to this point
       let path = ['M', x, y, "Q"];
 
+      //Initialize the step counter
       let steps = settings.sections;
       let step = 0;
       
+      //direction: Is it x or y 
+  //goAnywhere: Can one walk completely randomly 
+  //If goAnywhere = false, it follows the originally given direction (for example, always to the right). 
+  //If goAnywhere = true, it randomly decides to go left/right, up/down. 
+  //It can make the lines walk regularly and also move randomly, looking as if they are growing freely.
       const getNewDirection = (direction, goAnywhere) => {
           if(!goAnywhere && settings['direction' + direction.toUpperCase()] != 0) 
               return settings['direction' + direction.toUpperCase()];
           return Math.random() < 0.5 ? -1 : 1;
       }
 
+      //Each Bezier curve requires two points (one control point and one target point), so the overall step is sections * 2
       while(step < steps * 2) {
+        //Move the position a little each time to allow the line to continue extending. 
+//dx and dy are directions. For example, to the right is dx = 1. 
+//step / 30 Make the changes in each step a little larger. This makes the lines more natural. 
+//this.grid is the unit distance
           step++;
           x += (dx * (step/ 30)) * this.grid;
           y += (dy * (step/ 30)) * this.grid;
+          //Except for the first point, all the others should be added before the coordinates
           if(step != 1) path.push(',');
           path.push(x);
           path.push(y);
@@ -119,24 +144,28 @@ class Squiggle {
               dy = dy == 0 ? getNewDirection('y', step > 8) : 0;
           }
       }
-      
+      //Finally, combine all the instructions in the array into a string
       return path.join(' ');
   }
 
+  //First, randomly select an integer between 0 and 100. This offset is for creating color changes
   getColor() {
+    //Use the Math.sin() function to make the RGB color values smoother and more natural. 
+//The three channels (red, green, and blue) use different phases (+0, +2, +4) to produce different changes
       let offset = Math.round(Math.random() * 100);
       let r = Math.sin(0.3 * offset) * 100 + 155;
       let g = Math.sin(0.3 * offset + 2) * 100 + 155;
       let b = Math.sin(0.3 * offset + 4) * 100 + 155;
       return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
   }
-
+//Convert numbers (such as 200) to hexadecimal (such as "c8")
   componentToHex(c) {
       let hex = Math.round(c).toString(16);
       return hex.length == 1 ? "0" + hex : hex;
   }
 }
 
+//Create a class called App, which is the core controller of the animation application
 class App {
   constructor(container) {
       this.container = container;
@@ -153,6 +182,11 @@ class App {
       window.addEventListener('resize', () => this.onResize());
   }
   
+  //Set up the mouse/touch input listener. 
+ 
+//getPosition is an auxiliary function that helps you obtain the position of the mouse or finger on the page. 
+ 
+//This function will be used later in events such as mousedown and mousemove
   setupInput() {
       const getPosition = (e) => {
           const evt = e.touches ? e.touches[0] : e;
@@ -162,9 +196,10 @@ class App {
           };
       };
       
-
+//When the mouse moves over the page, obtain the position of the mouse
       this.container.addEventListener('mousemove', (e) => {
           const position = getPosition(e);
+          //If the mouse position has been recorded before, generate two squiggle animation lines near the current position to create ripples or a sense of trajectory following the mouse movement
           if (this.lastMousePosition) {
               for(let i = 0; i < 2; i++) {
                   this.createSqwigFromMouse(position);
