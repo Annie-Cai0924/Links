@@ -23,31 +23,42 @@ let channelSlug = 'the-art-and-function-of-maps'
            Only tiles with numbers 3,5,6,9,10 and 12 actually exist (4-bit numbers with two 1s)
         */
 // The code uses SVG path and GSAP (Animation library) to achieve dynamic curve path animation, similar to the effect of graffiti.
+//Here is a class called Squiggle written, and its function is: on a canvas
 class Squiggle {
+  //Save the grid and stage
   constructor(stage, settings, grid) {
+    //sqwigs is an empty array. We will add lines to it later.
       this.grid = grid;
       this.stage = stage;
       this.sqwigs = [];
+      //state refers to the current state. It is first marked as "animating", indicating that the line is moving
       this.state = 'animating';
-      
+      //At the beginning, the width of the line is 0 and it is invisible
       settings.width = 0;
+      //The opacity is 1, indicating that it is completely opaque
       settings.opacity = 1;
-
+//Generate a basic line pat using these Settings
       let path = this.createLine(settings);
+      //draw a total of three such lines
       let sqwigCount = 3;
-      
+      //Use a loop to generate these three lines
       for(let i = 0; i < sqwigCount; i++) {
+        //Use JSON.parse for settings. 
+        //Make a deep copy to ensure that each line has its own independent Settings
           this.createSqwig(i, sqwigCount, path, JSON.parse(JSON.stringify(settings)), i == sqwigCount - 1);
       }
   }
 
+  //A path (path/line) was created in SVG format, and its shape was set using the PATH passed in front of it
   createSqwig(index, total, path, settings, forceWhite) {
       let sqwig = document.createElementNS("http://www.w3.org/2000/svg", 'path');
       sqwig.setAttribute('d', path);
+      //If forceWhite is true, it forces the line to be dark gray.
       sqwig.style.fill = 'none';
+      //Otherwise, randomly use this.getColor() to generate the color
       sqwig.style.stroke = forceWhite ? '#303030' : this.getColor();
       sqwig.style.strokeLinecap = "round";
-      
+      //just want the line to have an animation effect of "segments", so I calculate the total length first and then use one sixth of the length
       settings.length = sqwig.getTotalLength();
       settings.chunkLength = settings.length / 6;
       settings.progress = settings.chunkLength;
@@ -328,12 +339,7 @@ fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-stor
                       </div>
                   </div>
                   `;
-          } 
-
-
-
-               // PDFs！
-          else if (block.attachment && block.attachment.content_type && block.attachment.content_type.includes('pdf')) {
+          } else if (block.attachment && block.attachment.content_type && block.attachment.content_type.includes('pdf')) {
               categoryId = 'pdfs';
               blockItem = `
                   <div class="list"><embed src="${ block.attachment.url }" type="application/pdf" ></div>
@@ -354,11 +360,7 @@ fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-stor
           } else if (block.class == 'Text') {
               categoryId = 'text';
               blockItem = `${ block.content }`;
-          }
-
-
-               // Vedios！
-          else if (block.class == 'Media') {
+          } else if (block.class == 'Media') {
             blockItem = '';
             let embed = block.embed?.type || '';
             console.log(280,embed);
@@ -373,9 +375,10 @@ fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-stor
                 </div>
                 </div>
                 `;
-            }
+              } else if (embed.includes('rich')) {
+
+
             // Linked audio!
-            else if (embed.includes('rich')) {
               blockItem = `
               <div class="content-block">
               <div class="audio">
@@ -387,8 +390,10 @@ fetch(`https://api.are.na/v2/channels/${channelSlug}?per=100`, { cache: 'no-stor
               </div>
               `;
             }
-          }
-          else if (block.class == 'Attachment') {
+
+
+
+          } else if (block.class == 'Attachment') {
             let attachment = block.attachment?.content_type || ''; // Save us some repetition
             
             // Uploaded videos!
