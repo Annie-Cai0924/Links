@@ -541,6 +541,17 @@ var WIDTH = window.innerWidth * 0.8,
   HEIGHT = window.innerHeight;
 
 viewport = document.getElementById('viewport');
+  
+  // Add instructional text above the map
+  const instructionPanel = document.createElement('div');
+  instructionPanel.className = 'map-instructions';
+  instructionPanel.innerHTML = `
+    <div class="instruction-content">
+      <h3>EXPLORE CONTENT CATEGORIES</h3>
+      <p>Rotate the map to discover content markers. Click any pin to view related content.</p>
+    </div>
+  `;
+  viewport.parentNode.insertBefore(instructionPanel, viewport);
 
 renderer = new THREE.WebGLRenderer();
 renderer = new THREE.WebGLRenderer({ antialias: 0, clearAlpha: 0, alpha:true });
@@ -552,18 +563,12 @@ window.addEventListener( 'resize', onWindowResize, false );
 
 scene.fog = new THREE.Fog( 0x111111, 22000, 25000 );
 
-/* ************** */
-/*                */
-/*     camera     */
-/*                */
-/* ************** */
 camera = new THREE.PerspectiveCamera(10, WIDTH / HEIGHT, 0.1, 200000);
 camera.position.set(0, 10000, -20000 );
 scene.add(camera);
 
 controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.autoRotate = true;
-controls.autoRotateSpeed = 0.25; 
 createGroundPlane();
 createTopLevelButtons();
 animates();
@@ -666,6 +671,16 @@ camera.updateProjectionMatrix();
 
 function animates() {
   requestAnimationFrame(animates);
+  
+  // make the mark always face to the camera
+  mapMarkers.forEach(markerGroup => {
+    markerGroup.children.forEach(child => {
+      if (child.userData && child.userData.type === 'label') {
+        child.quaternion.copy(camera.quaternion);
+      }
+    });
+  });
+  
   renderer.render(scene, camera);
   controls.update();
 }
@@ -743,6 +758,7 @@ constructor() {
 } // Chain
 
 //------------------------------------------------------------------------
+
 
 class Cell {
 constructor(kx, ky, kind) {
