@@ -574,7 +574,9 @@ createTopLevelButtons();
 animates();
 }
 
+//A three-dimensional dot matrix ground was generated, which looks like the shape of a mountain. This is achieved by creating a grid composed of many points, each of which is like a small particle on the terrain
 function createGroundPlane(){
+  //Place each terrain point with an updatable geometry
 mountainGeometry = new THREE.Geometry();
 mountainGeometry.dynamic = true;
 mountainGeometry.__dirtyVertices = true;
@@ -588,6 +590,7 @@ centerZ = 0;
 totalX = 150;
 totalZ = 150;
 
+//The position of each point has been precisely calculated to form a regular pattern
 particleDistance = 25;
 for ( var x = 0; x < totalX; x ++ ) {
   xplot = x - Math.round((totalX-1)/2);
