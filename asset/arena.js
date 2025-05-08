@@ -810,6 +810,7 @@ draw() {
   this.drawEdges();
 }
 
+//The function drawEdges() is used to draw the border lines of the current grid. Each square can have two sides, "up" and "left". If the edge in a certain direction does not exist, then draw that edge. In this way, which edges are visible can be controlled
 drawEdges() {
   let x0 = this.kx * size; // left of square
   let y0 = offsY + this.ky * size; // top of square
@@ -843,6 +844,8 @@ for (let kx = 0; kx < nbx; ++kx) {
 } // createGrid
 
 //------------------------------------------------------------------------
+//In a grid map in the style of "wave function collapse", add a whole column of squares. Each square should refer to the neighbors on the left and top, and select legal patterns to avoid conflicts
+
 function addColumn() {
 let column = [];
 const kx = grid.length;
