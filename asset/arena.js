@@ -1252,96 +1252,126 @@ addMarkerClickEvent();
 }
 
     
-    // Assemble the marker
-    marker.appendChild(markerInner);
-    markerContainer.appendChild(marker);
-    markerContainer.appendChild(markerLabel);
-    markerContainer.appendChild(markerShadow);
-    buttonsContainer.appendChild(markerContainer);
-  });
+  // Add the mouse hover effect
+function addMarkerClickEvent() {
+
+  // Create ray projectors for click detection
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
   
-  // Add CSS for animation
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes marker-bounce {
-      0% {
-        transform: rotate(-45deg) translateY(0);
-      }
-      100% {
-        transform: rotate(-45deg) translateY(-5px);
-      }
-    }
-    
-    .map-marker-container:nth-child(1) .map-marker {
-      animation-delay: 0s;
-    }
-    .map-marker-container:nth-child(2) .map-marker {
-      animation-delay: 0.1s;
-    }
-    .map-marker-container:nth-child(3) .map-marker {
-      animation-delay: 0.2s;
-    }
-    .map-marker-container:nth-child(4) .map-marker {
-      animation-delay: 0.3s;
-    }
-    .map-marker-container:nth-child(5) .map-marker {
-      animation-delay: 0.4s;
-    }
-    
-    /* Responsive styles for map markers */
-    @media (max-width: 768px) {
-      .map-marker-container {
-        transform: translate(-50%, -100%) scale(0.9);
-      }
-    }
-  `;
-  document.head.appendChild(style);
+  // Store the current hover tag
+  let hoveredMarker = null;
   
-  // Add buttons to the viewport (map card)
-  const viewport = document.getElementById('viewport');
-  if (viewport) {
-    viewport.style.position = 'relative'; // Ensure the container has position relative
-    viewport.appendChild(buttonsContainer);
-  } else {
-    // Fallback to body if viewport not found
-    document.body.appendChild(buttonsContainer);
+  // Add mouse movement event listeners
+  viewport.addEventListener('mousemove', (event) => {
+    // Calculate the position of the mouse in the normalized device coordinates
+    const rect = viewport.getBoundingClientRect();
+    mouse.x = ((event.clientX - rect.left) / viewport.clientWidth) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / viewport.clientHeight) * 2 + 1;
+    
+    // Set up the ray projector
+    raycaster.setFromCamera(mouse, camera);
+    
+    // Check the intersection with the marking
+    const intersects = raycaster.intersectObjects(scene.children, true);
+    
+    // Used to mark whether a new hovering object has been found
+    let foundNewHover = false;
+    
+    // Search for the marked intersection points
+    for (let i = 0; i < intersects.length; i++) {
+      let object = intersects[i].object;
+      
+      // Traverse upwards to the parent object with user data
+      while (object && (!object.userData || !object.userData.type)) {
+        object = object.parent;
   }
   
-  // Add lights to the scene instead of markers
-  createVisualMapMarkers(contentTypes);
-  
-  // Add window resize listener to adjust marker positions
-  window.addEventListener('resize', () => {
-    // Remove existing buttons
-    const existingButtons = document.getElementById('content-type-buttons');
-    if (existingButtons) {
-      existingButtons.remove();
-    }
-    // Recreate buttons with new positions
-    createTopLevelButtons();
-  });
+      // If a mark is found and it is not the current hovering mark
+      if (object && object.userData && object.userData.type === 'marker' && hoveredMarker !== object) {
+        // If there is already a hovering mark, restore its state
+        if (hoveredMarker) {
+          resetMarkerScale(hoveredMarker);
+        }
+        
+        // Set the tag for a new hover
+        hoveredMarker = object;
+        
+        // zoom in marks
+        object.scale.set(1.2, 1.2, 1.2);
+        
+        // change the light
+        object.children.forEach(child => {
+          if (child instanceof THREE.PointLight) {
+            child.intensity = 1.5; // 增加光强度
+          }
+        });
+        
+        // set the mark as a pointer
+        viewport.style.cursor = 'pointer';
+        
+        foundNewHover = true;
+        break;
+      }
 }
 
-// Create visual markers on the map (no interaction)
-function createVisualMapMarkers(contentTypes) {
-  // Define positions that correspond to the button positions
-  const markerPositions = [
-    { x: -800, z: -400, height: 400 },  // PDFs
-    { x: 700, z: 600, height: 300 },    // Images
-    { x: -600, z: 900, height: 350 },   // Links
-    { x: 0, z: 0, height: 500 },        // Videos
-    { x: 600, z: -500, height: 450 }    // Audios
-  ];
+    // If no new hovering object is found but there was a hovering object before, restore its state
+    if (!foundNewHover && hoveredMarker) {
+      resetMarkerScale(hoveredMarker);
+      hoveredMarker = null;
+      viewport.style.cursor = 'auto';
+    }
+  });
   
-  // We're not creating visual markers anymore, but we'll keep the function
-  // for compatibility with the rest of the code
+  // Auxiliary function: Restore the mark size
+  function resetMarkerScale(marker) {
+    marker.scale.set(1.0, 1.0, 1.0);
+    
+    // Restore light intensity
+    marker.children.forEach(child => {
+      if (child instanceof THREE.PointLight) {
+        child.intensity = 0.8; // 恢复原光强度
+      }
+    });
+  }
   
-  // Add lights at marker positions to highlight areas without showing spheres
-  markerPositions.forEach((pos, index) => {
-    // Add a light at each position to create a subtle highlight
-    const pointLight = new THREE.PointLight(contentTypes[index].color.replace('#', '0x'), 0.8, 800);
-    pointLight.position.set(pos.x, pos.height + 150, pos.z);
-    scene.add(pointLight);
+  // Add mouse click event listeners
+  viewport.addEventListener('click', (event) => {
+    // Calculate the position of the mouse in the normalized device coordinates
+    const rect = viewport.getBoundingClientRect();
+    mouse.x = ((event.clientX - rect.left) / viewport.clientWidth) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / viewport.clientHeight) * 2 + 1;
+
+    //Set up the ray projector
+    raycaster.setFromCamera(mouse, camera);
+    
+    // Check the intersection with the marking
+    const intersects = raycaster.intersectObjects(scene.children, true);
+    
+    // Look for the first marked intersection point
+    for (let i = 0; i < intersects.length; i++) {
+      let object = intersects[i].object;
+      
+      // Traverse upwards to the parent object with user data
+      while (object && (!object.userData || !object.userData.type)) {
+        object = object.parent;
+      }
+      
+      // If the mark is found, trigger the display content
+      if (object && object.userData && object.userData.type === 'marker') {
+        // Add click animation effects
+        const originalScale = object.scale.clone();
+        object.scale.set(1.4, 1.4, 1.4);
+        
+        // Restore the original size
+        setTimeout(() => {
+          object.scale.copy(originalScale);
+        }, 200);
+        
+        showContentByType(null, object.userData.index);
+        break;
+      }
+    }
   });
 }
 
