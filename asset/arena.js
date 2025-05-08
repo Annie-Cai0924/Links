@@ -1072,37 +1072,35 @@ function createTopLevelButtons() {
     { name: "Videos", color: "#ff9800" },
     { name: "Audios", color: "#9c27b0" }
   ];
+   // create 3d marks
+   createVisualMapMarkers(contentTypes);
   
-  // Create a container for the buttons
-  const buttonsContainer = document.createElement('div');
-  buttonsContainer.id = 'content-type-buttons';
-  buttonsContainer.style.cssText = `
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1500;
-    pointer-events: none; /* Allow clicks to pass through the container */
-  `;
+   // Add a window size change listener and recreate the tags
+   window.addEventListener('resize', () => {
+     // The tag is recreated only when the viewport size changes significantly
+     createVisualMapMarkers(contentTypes);
+   });
+ }
+ 
+ // Improve marker appearance and selection feedback
+function createVisualMapMarkers(contentTypes) {
+  // Clear old markers
+  mapMarkers.forEach(marker => {
+    if (marker && marker.parent) {
+      marker.parent.remove(marker);
+    }
+  });
+  mapMarkers = [];
   
-  // Define irregular positions for the buttons (percentage-based)
-  // Adjust positions to be more centered for better mobile display
-  const isMobile = window.innerWidth <= 768;
-  const buttonPositions = isMobile ? [
-    { top: '20%', left: '30%' },
-    { top: '35%', left: '65%' },
-    { top: '55%', left: '25%' },
-    { top: '45%', left: '50%' },
-    { top: '70%', left: '60%' }
-  ] : [
-    { top: '15%', left: '25%' },
-    { top: '30%', left: '70%' },
-    { top: '60%', left: '20%' },
-    { top: '45%', left: '50%' },
-    { top: '75%', left: '65%' }
+  // Define marker positions
+  const markerPositions = [
+    { x: -800, z: -400, height: 550 },  // PDFs
+    { x: 700, z: 600, height: 450 },    // Images
+    { x: -600, z: 900, height: 500 },   // Links
+    { x: 0, z: 0, height: 650 },        // Videos
+    { x: 600, z: -500, height: 600 }    // Audios
   ];
-  
+
   // Create a button for each content type
   contentTypes.forEach((contentType, index) => {
     // Create marker container
