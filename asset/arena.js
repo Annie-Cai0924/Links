@@ -1081,7 +1081,6 @@ function createTopLevelButtons() {
      createVisualMapMarkers(contentTypes);
    });
  }
- 
  // Improve marker appearance and selection feedback
 function createVisualMapMarkers(contentTypes) {
   // Clear old markers
@@ -1101,107 +1100,157 @@ function createVisualMapMarkers(contentTypes) {
     { x: 600, z: -500, height: 600 }    // Audios
   ];
 
-  // Create a button for each content type
-  contentTypes.forEach((contentType, index) => {
-    // Create marker container
-    const markerContainer = document.createElement('div');
-    markerContainer.className = 'map-marker-container';
-    markerContainer.style.cssText = `
-      position: absolute;
-      top: ${buttonPositions[index].top};
-      left: ${buttonPositions[index].left};
-      transform: translate(-50%, -100%);
-      pointer-events: auto;
-      cursor: pointer;
-      z-index: 1500;
-      transition: all 0.3s ease;
-    `;
-    
-    // Create the pin/marker element
-    const marker = document.createElement('div');
-    marker.className = 'map-marker';
-    marker.style.cssText = `
-      width: ${isMobile ? '24px' : '30px'};
-      height: ${isMobile ? '24px' : '30px'};
-      background-color: ${contentType.color};
-      border-radius: 50% 50% 50% 0;
-      transform: rotate(-45deg);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-      position: relative;
-      animation: marker-bounce 1s ease-in-out infinite alternate;
-    `;
-    
-    // Create inner circle for the marker
-    const markerInner = document.createElement('div');
-    markerInner.className = 'map-marker-inner';
-    markerInner.style.cssText = `
-      width: ${isMobile ? '12px' : '15px'};
-      height: ${isMobile ? '12px' : '15px'};
-      background-color: white;
-      border-radius: 50%;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    `;
-    
-    // Create label for the marker
-    const markerLabel = document.createElement('div');
-    markerLabel.className = 'map-marker-label';
-    markerLabel.textContent = contentType.name;
-    markerLabel.style.cssText = `
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: rgba(0, 0, 0, 0.7);
-      color: white;
-      padding: ${isMobile ? '3px 6px' : '4px 8px'};
-      border-radius: 4px;
-      font-size: ${isMobile ? '10px' : '12px'};
-      font-weight: bold;
-      white-space: nowrap;
-      margin-top: 5px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-    `;
-    
-    // Add shadow/base for the marker
-    const markerShadow = document.createElement('div');
-    markerShadow.className = 'map-marker-shadow';
-    markerShadow.style.cssText = `
-      width: ${isMobile ? '12px' : '15px'};
-      height: 3px;
-      background-color: rgba(0, 0, 0, 0.3);
-      border-radius: 50%;
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      filter: blur(2px);
-      transition: all 0.3s ease;
-    `;
-    
-    // Add hover effects
-    markerContainer.addEventListener('mouseover', () => {
-      marker.style.transform = 'rotate(-45deg) scale(1.2)';
-      markerLabel.style.opacity = '1';
-      markerShadow.style.width = isMobile ? '16px' : '20px';
-      markerShadow.style.opacity = '0.5';
-    });
-    
-    markerContainer.addEventListener('mouseout', () => {
-      marker.style.transform = 'rotate(-45deg) scale(1)';
-      markerLabel.style.opacity = '0';
-      markerShadow.style.width = isMobile ? '12px' : '15px';
-      markerShadow.style.opacity = '0.3';
-    });
-    
-    // Add click event
-    markerContainer.addEventListener('click', () => {
-      showContentByType(null, index);
-    });
+// Create 3D markers for each position
+markerPositions.forEach((pos, index) => {
+  // Create a 3D marker group
+  const markerGroup = new THREE.Group();
+  markerGroup.position.set(pos.x, pos.height, pos.z);
+  
+  // Create marker icon (cone)
+  const markerGeometry = new THREE.ConeGeometry(80, 160, 4);
+  markerGeometry.rotateX(Math.PI);
+  
+  const markerMaterial = new THREE.MeshBasicMaterial({
+    color: contentTypes[index].color.replace('#', '0x'),
+    transparent: true,
+    opacity: 0.85
+  });
+  
+  const markerMesh = new THREE.Mesh(markerGeometry, markerMaterial);
+  markerGroup.add(markerMesh);
+  
+  // Create inner dot
+  const innerGeometry = new THREE.SphereGeometry(35, 32, 32);
+  const innerMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffffff
+  });
+  const innerMesh = new THREE.Mesh(innerGeometry, innerMaterial);
+  innerMesh.position.y = 50;
+  markerGroup.add(innerMesh);
+  
+  // Create highlighted material for selection state
+  const highlightedMaterial = new THREE.MeshBasicMaterial({
+    color: 0xFFFFFF,
+    transparent: true,
+    opacity: 0.3,
+    side: THREE.BackSide
+  });
+  
+  // Create selection indicator (initially invisible)
+  const selectionRingGeometry = new THREE.TorusGeometry(100, 10, 16, 50);
+  selectionRingGeometry.rotateX(Math.PI/2);
+  const selectionRingMaterial = new THREE.MeshBasicMaterial({
+    color: 0xFFFFFF,
+    transparent: true,
+    opacity: 0.0 // Start invisible
+  });
+  const selectionRing = new THREE.Mesh(selectionRingGeometry, selectionRingMaterial);
+  selectionRing.position.y = -50;
+  selectionRing.userData = { type: 'selectionRing' };
+  markerGroup.add(selectionRing);
+  
+  // Create label with improved design
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 200;
+  const context = canvas.getContext('2d');
+  
+  // Create rounded rectangle background
+  context.fillStyle = 'rgba(0, 0, 0, 0.85)';
+  roundRect(context, 10, 10, canvas.width - 20, canvas.height - 20, 20, true);
+  
+  // Add colored border matching the marker color
+  context.strokeStyle = contentTypes[index].color;
+  context.lineWidth = 8;
+  roundRect(context, 10, 10, canvas.width - 20, canvas.height - 20, 20, false, true);
+  
+  // Add icon indicator
+  let icon = '';
+  switch(index) {
+    case 0: icon = '📄'; break; // PDFs
+    case 1: icon = '🖼️'; break; // Images
+    case 2: icon = '🔗'; break; // Links
+    case 3: icon = '🎬'; break; // Videos
+    case 4: icon = '🎵'; break; // Audios
+  }
+  
+  // Add text with category name and icon
+  context.font = 'bold 48px Arial';
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.fillStyle = 'white';
+  context.fillText(`${icon} ${contentTypes[index].name}`, canvas.width/2, canvas.height/2);
+  
+  // Helper function: draw rounded rectangle
+  function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    if (fill) {
+      ctx.fill();
+    }
+    if (stroke) {
+      ctx.stroke();
+    }
+  }
+  
+  const texture = new THREE.CanvasTexture(canvas);
+  const labelMaterial = new THREE.MeshBasicMaterial({
+    map: texture,
+    transparent: true,
+    side: THREE.DoubleSide
+  });
+  const labelGeometry = new THREE.PlaneGeometry(350, 150);
+  const labelMesh = new THREE.Mesh(labelGeometry, labelMaterial);
+  labelMesh.position.y = -150;
+  
+  // Make label always face the camera
+  labelMesh.userData = { type: 'label' };
+  markerGroup.add(labelMesh);
+  
+  // Add light to make marker more visible
+  const pointLight = new THREE.PointLight(contentTypes[index].color.replace('#', '0x'), 1.2, 1000);
+  pointLight.position.set(0, 50, 0);
+  markerGroup.add(pointLight);
+  
+  // Store user data for interaction
+  markerGroup.userData = { 
+    index: index, 
+    type: 'marker',
+    selected: false,
+    originalScale: new THREE.Vector3(1, 1, 1),
+    selectionRing: selectionRing,
+    color: contentTypes[index].color.replace('#', '0x')
+  };
+  
+  mapMarkers.push(markerGroup);
+  scene.add(markerGroup);
+
+  // Add glow effect
+  const glowGeometry = new THREE.ConeGeometry(90, 180, 4);
+  glowGeometry.rotateX(Math.PI);
+  const glowMaterial = new THREE.MeshBasicMaterial({
+    color: contentTypes[index].color.replace('#', '0x'),
+    transparent: true,
+    opacity: 0.3,
+    side: THREE.BackSide
+  });
+  const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
+  markerGroup.add(glowMesh);
+});
+
+// Add click event listener
+addMarkerClickEvent();
+}
+
     
     // Assemble the marker
     marker.appendChild(markerInner);
