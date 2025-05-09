@@ -1383,6 +1383,9 @@ function updateVisualMarkerPositions(data) {
 
 // Function to display content for a specific content type
 function showContentByType(contentType, buttonIndex) {
+  // First highlight the selected marker
+  highlightSelectedMarker(buttonIndex);
+  
   const sidePanel = document.getElementById('side-panel');
   if (!sidePanel) {
     createSidePanel();
@@ -1394,7 +1397,7 @@ function showContentByType(contentType, buttonIndex) {
   // Define content titles for messages
   const contentTitles = ["PDF Documents", "Image Gallery", "Web Links", "Video Content", "Audio Content"];
   
-  // Get all blocks based on the button index (not content type)
+  // Get all blocks based on the button index
   let contentBlocks = [];
   
   // Get all blocks (excluding the first two special blocks)
@@ -1453,6 +1456,15 @@ function showContentByType(contentType, buttonIndex) {
   // Clear existing content in the side panel
   const contentContainer = document.getElementById('side-panel-content');
   contentContainer.innerHTML = '';
+  
+  // Add header with category info
+  const categoryHeader = document.createElement('div');
+  categoryHeader.className = 'category-header';
+  categoryHeader.innerHTML = `
+    <h2>${contentTitles[buttonIndex]}</h2>
+    <p>Showing ${contentBlocks.length} items in this category</p>
+  `;
+  contentContainer.appendChild(categoryHeader);
   
   // Create cards container
   const cardsContainer = document.createElement('div');
