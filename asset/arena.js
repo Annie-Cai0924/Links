@@ -1503,106 +1503,95 @@ function showContentByType(contentType, buttonIndex) {
       });
     }
     
-    // Add content blocks to cards
-    Array.from(contentBlocks).forEach((block, index) => {
-      // Create card
-      const card = document.createElement('div');
-      card.className = 'card';
-      
-      // Check if we're on mobile
-      const isMobile = window.innerWidth <= 768;
-      
-      // Create card inner container
-      const cardInner = document.createElement('div');
-      cardInner.className = 'card__inner';
-      
-      // On mobile, make card height auto to avoid scrolling
-      if (isMobile) {
-        card.style.height = 'auto';
-        card.style.minHeight = '90vh';
-        cardInner.style.position = 'relative';
-        cardInner.style.height = 'auto';
-        cardInner.style.minHeight = '90vh';
-      }
-      
-      // Create content container
-      const cardContent = document.createElement('div');
-      cardContent.className = 'card__content';
-      
-      // Clone block content
-      const clonedBlock = block.cloneNode(true);
-      clonedBlock.style.display = 'block';
-      clonedBlock.style.width = '100%';
-      clonedBlock.style.height = 'auto';
-      clonedBlock.style.minHeight = 'auto';
-      clonedBlock.style.marginTop = '0';
-      clonedBlock.style.paddingTop = '0';
-      
-      // Optimize media elements for card display
-      const images = clonedBlock.querySelectorAll('img');
-      images.forEach(img => {
-        img.style.maxWidth = '100%';
-        img.style.maxHeight = isMobile ? '50vh' : '70vh';
-        img.style.objectFit = 'contain';
-        img.style.margin = '0 auto';
-      });
-      
-      const videos = clonedBlock.querySelectorAll('video, iframe');
-      videos.forEach(video => {
-        video.style.width = '100%';
-        video.style.height = 'auto';
-        video.style.maxHeight = isMobile ? '50vh' : '70vh';
-        video.style.margin = '0 auto';
-      });
-      
-      // Special handling for different content types
-      if (buttonIndex === 0) { // PDFs
-        // Ensure PDF embeds are properly sized
-        const pdfEmbeds = clonedBlock.querySelectorAll('embed[type="application/pdf"]');
-        pdfEmbeds.forEach(embed => {
-          embed.style.width = '100%';
-          embed.style.height = isMobile ? '50vh' : '70vh';
-          embed.style.display = 'block';
-          embed.style.margin = '0 auto';
-          // Add attributes to improve PDF viewing
-          embed.setAttribute('toolbar', '1');
-          embed.setAttribute('navpanes', '1');
-          embed.setAttribute('scrollbar', '1');
-          embed.setAttribute('statusbar', '1');
-        });
+      // Add content blocks to cards
+      Array.from(contentBlocks).forEach((block, index) => {
+        // Create card
+        const card = document.createElement('div');
+        card.className = 'card';
         
-        // Also handle PDF in list divs
-        const pdfLists = clonedBlock.querySelectorAll('.list');
-        pdfLists.forEach(list => {
-          list.style.width = '100%';
-          list.style.height = isMobile ? '50vh' : '70vh';
-          const embedInList = list.querySelector('embed');
-          if (embedInList) {
-            embedInList.style.width = '100%';
-            embedInList.style.height = '100%';
-            // Add attributes to improve PDF viewing
-            embedInList.setAttribute('toolbar', '1');
-            embedInList.setAttribute('navpanes', '1');
-            embedInList.setAttribute('scrollbar', '1');
-            embedInList.setAttribute('statusbar', '1');
+        // Check if we're on mobile
+        const isMobile = window.innerWidth <= 768;
+        
+        // Create card inner container
+        const cardInner = document.createElement('div');
+        cardInner.className = 'card__inner';
+        
+        // On mobile, make card height auto to avoid scrolling
+        if (isMobile) {
+          card.style.height = 'auto';
+          card.style.minHeight = '90vh';
+          cardInner.style.position = 'relative';
+          cardInner.style.height = 'auto';
+          cardInner.style.minHeight = '90vh';
+        }
+        
+        // Special processing of PDF and audio content to fill up the entire space
+        if (buttonIndex === 0) { // PDFs
+          const pdfBlock = block.cloneNode(true);
+          
+          // Search for PDF embedded elements
+          const pdfEmbeds = pdfBlock.querySelectorAll('embed[type="application/pdf"]');
+          const pdfLists = pdfBlock.querySelectorAll('.list');
+          
+          // Set the card content as a full-height container
+          cardInner.style.padding = '0';
+          cardInner.style.overflow = 'hidden';
+          
+          const pdfContent = document.createElement('div');
+          pdfContent.className = 'pdf-content';
+          pdfContent.style.cssText = 'width: 100%; height: calc(100vh - 120px); display: flex; flex-direction: column;';
+          
+          // Handle individual PDF embeddings
+          if (pdfEmbeds.length > 0) {
+            const pdf = pdfEmbeds[0];
+            pdf.style.width = '100%';
+            pdf.style.height = '100%';
+            pdf.style.border = 'none';
+            pdf.setAttribute('toolbar', '1');
+            pdf.setAttribute('navpanes', '1');
+            pdf.setAttribute('scrollbar', '1');
+            
+            pdfContent.appendChild(pdf);
+          } 
+          // Handle the PDF list container
+          else if (pdfLists.length > 0) {
+            const pdfList = pdfLists[0];
+            pdfList.style.width = '100%';
+            pdfList.style.height = '100%';
+            
+            const listEmbed = pdfList.querySelector('embed');
+            if (listEmbed) {
+              listEmbed.style.width = '100%';
+              listEmbed.style.height = '100%';
+              listEmbed.style.border = 'none';
+              listEmbed.setAttribute('toolbar', '1');
+              listEmbed.setAttribute('navpanes', '1');
+              listEmbed.setAttribute('scrollbar', '1');
+            }
+            
+            pdfContent.appendChild(pdfList);
           }
-        });
-        
-        // Improve PDF download links
-        const pdfLinks = clonedBlock.querySelectorAll('.name a');
-        pdfLinks.forEach(link => {
-          link.style.display = 'inline-block';
-          link.style.margin = isMobile ? '5px auto' : '10px auto';
-          link.style.padding = isMobile ? '6px 12px' : '8px 16px';
-          link.style.backgroundColor = '#2196f3';
-          link.style.color = 'white';
-          link.style.textDecoration = 'none';
-          link.style.borderRadius = '4px';
-          link.style.fontWeight = 'bold';
-          link.style.textAlign = 'center';
-          link.style.fontSize = isMobile ? '14px' : '16px';
-          link.target = '_blank';
-        });
+          
+          // add download links
+          const nameDiv = pdfBlock.querySelector('.name');
+          if (nameDiv) {
+            const linkContainer = document.createElement('div');
+            linkContainer.style.cssText = 'padding: 10px; text-align: center; background: #1a1a1a;';
+            
+            const pdfLink = nameDiv.querySelector('a');
+            if (pdfLink) {
+              const newLink = document.createElement('a');
+              newLink.href = pdfLink.href;
+              newLink.target = '_blank';
+              newLink.rel = 'noopener';
+              newLink.textContent = 'Download PDF';
+              newLink.className = 'view-btn';
+              linkContainer.appendChild(newLink);
+            }
+            
+            pdfContent.appendChild(linkContainer);
+          }
+
         
         // Ensure the name div is properly styled
         const nameDiv = clonedBlock.querySelector('.name');
