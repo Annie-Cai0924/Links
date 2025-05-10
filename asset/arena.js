@@ -713,7 +713,7 @@ const app = new App(document.getElementsByTagName('body')[0]);
 
 const NB_SQUARES_MIN = 20; // number of squares in lRef(geometric mean of canvas width and height)
 const NB_SQUARES_MAX = 30;
-const WINDOW_WIDTH_DURATION = 20; // in seconds; used for horizontal scrolling speed : time to cross the screen horizontally
+const WINDOW_WIDTH_DURATION = 30; // in seconds; used for horizontal scrolling speed : time to cross the screen horizontally
 let canv, ctx; // canvas and context
 let maxx, maxy; // canvas dimensions
 
