@@ -1759,22 +1759,68 @@ function showContentByType(contentType, buttonIndex) {
           cardInner.appendChild(cardIndicator);
         }
         
-        else if (buttonIndex === 2) { // Links
-        // Enhance link display
-        const linkElements = clonedBlock.querySelectorAll('a');
-        linkElements.forEach(link => {
-          link.style.color = '#2196f3';
-          link.style.textDecoration = 'none';
-          link.style.fontWeight = 'bold';
-          link.style.display = 'inline-block';
-          link.style.marginTop = '10px';
-          link.target = '_blank';
-        });
+        // Add visual elements first if they exist
+        if (visualContainer.children.length > 0) {
+          cardContent.appendChild(visualContainer);
+        }
+        
+        // Add text content
+        const textContainer = document.createElement('div');
+        textContainer.className = 'text-container';
+        
+        // Extract titles and descriptions
+        const titles = clonedBlock.querySelectorAll('.title, .name, h1, h2, h3');
+        const descriptions = clonedBlock.querySelectorAll('.descption, .descc, .description, p:not(.title):not(.name)');
+        const links = clonedBlock.querySelectorAll('a');
+        
+        // Add title if exists
+        if (titles.length > 0) {
+          const titleEl = document.createElement('h3');
+          titleEl.className = 'content-title';
+          titleEl.textContent = titles[0].textContent;
+          textContainer.appendChild(titleEl);
+        }
+        
+        // Add description if exists
+        if (descriptions.length > 0) {
+          const descEl = document.createElement('p');
+          descEl.className = 'content-description';
+          descEl.textContent = descriptions[0].textContent;
+          textContainer.appendChild(descEl);
+        }
+        
+        // Add links if exist
+        if (links.length > 0) {
+          const linksContainer = document.createElement('div');
+          linksContainer.className = 'links-container';
+          links.forEach(link => {
+            if (link.getAttribute('href') && !link.getAttribute('href').includes('#')) {
+              const linkBtn = document.createElement('a');
+              linkBtn.href = link.href;
+              linkBtn.target = '_blank';
+              linkBtn.rel = 'noopener';
+              linkBtn.className = 'view-btn';
+              linkBtn.textContent = link.textContent || 'View Original';
+              linksContainer.appendChild(linkBtn);
+            }
+          });
+          if (linksContainer.children.length > 0) {
+            textContainer.appendChild(linksContainer);
+          }
+        }
+        
+        // Add text content
+        if (textContainer.children.length > 0) {
+          cardContent.appendChild(textContainer);
+        } else {
+          // If no structured content was found, add the whole block
+          cardContent.appendChild(clonedBlock);
+        }
+        
+        cardInner.appendChild(cardContent);
       }
+
       
-      // Add to DOM
-      cardContent.appendChild(clonedBlock);
-      cardInner.appendChild(cardContent);
       card.appendChild(cardInner);
       cardsContainer.appendChild(card);
     });
