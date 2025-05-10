@@ -1592,7 +1592,134 @@ function showContentByType(contentType, buttonIndex) {
             pdfContent.appendChild(linkContainer);
           }
 
-        
+          cardInner.appendChild(pdfContent);
+        } else if (buttonIndex === 4) { // Audios
+          const audioBlock = block.cloneNode(true);
+          
+          // find the audios
+          const audioElements = audioBlock.querySelectorAll('audio');
+          const embedAudios = audioBlock.querySelectorAll('.audio, div:has(> audio)');
+          
+          // Create audio player container
+          const audioPlayerContainer = document.createElement('div');
+          audioPlayerContainer.className = 'audio-player-container';
+          audioPlayerContainer.style.cssText = `
+            width: 100%;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+          `;
+          
+          // Handle direct audio elements
+          if (audioElements.length > 0) {
+            const audio = audioElements[0];
+            
+            // Create a cover image
+            const coverImage = document.createElement('div');
+            coverImage.className = 'audio-cover';
+            
+            const imgElement = audioBlock.querySelector('img');
+            if (imgElement) {
+              const img = document.createElement('img');
+              img.src = imgElement.src;
+              img.style.cssText = `
+                width: 250px;
+                height: 250px;
+                object-fit: cover;
+                border-radius: 8px;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+              `;
+              coverImage.appendChild(img);
+            } else {
+              // If there are no pictures, create a default audio icon
+              const defaultCover = document.createElement('div');
+              defaultCover.style.cssText = `
+                width: 250px;
+                height: 250px;
+                background-color: #333;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 80px;
+              `;
+              defaultCover.innerHTML = '🎵';
+              coverImage.appendChild(defaultCover);
+            }
+            
+            audioPlayerContainer.appendChild(coverImage);
+            
+            // Create beautiful audio controls
+            const audioControls = document.createElement('div');
+            audioControls.className = 'audio-controls';
+            audioControls.style.cssText = `
+              width: 100%;
+              max-width: 400px;
+            `;
+            
+            // Clone the audio elements and set the styles
+            const newAudio = audio.cloneNode(true);
+            newAudio.controls = true;
+            newAudio.style.cssText = `
+              width: 100%;
+              height: 40px;
+              border-radius: 20px;
+            `;
+            
+            audioControls.appendChild(newAudio);
+            audioPlayerContainer.appendChild(audioControls);
+            
+            // Possible audio titles
+            const titleElements = audioBlock.querySelectorAll('.title, h2, h3, h4');
+            if (titleElements.length > 0) {
+              const titleElement = document.createElement('h3');
+              titleElement.textContent = titleElements[0].textContent;
+              titleElement.style.cssText = `
+                margin-top: 15px;
+                color: white;
+                font-size: 18px;
+                text-align: center;
+              `;
+              audioPlayerContainer.appendChild(titleElement);
+            }
+            
+            cardInner.appendChild(audioPlayerContainer);
+          } 
+          // Handle embedded audio
+          else if (embedAudios.length > 0) {
+            const embedAudio = embedAudios[0];
+            
+            // Clear the existing styles and apply the new ones
+            embedAudio.style.cssText = `
+              width: 100%;
+              padding: 30px 20px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 20px;
+            `;
+            
+            // Find and enhance iframes or embedded elements
+            const embedElement = embedAudio.querySelector('iframe, embed');
+            if (embedElement) {
+              embedElement.style.cssText = `
+                width: 100% !important;
+                max-width: 500px !important;
+                height: 160px !important;
+                border-radius: 8px;
+                margin: 0 auto;
+              `;
+            }
+            
+            cardInner.appendChild(embedAudio);
+          } else {
+            //If no specific audio element is found, use the entire block
+            cardInner.appendChild(audioBlock);
+          }
+
         // Ensure the name div is properly styled
         const nameDiv = clonedBlock.querySelector('.name');
         if (nameDiv) {
