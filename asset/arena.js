@@ -1720,12 +1720,20 @@ function showContentByType(contentType, buttonIndex) {
             cardInner.appendChild(audioBlock);
           }
 
-        // Ensure the name div is properly styled
-        const nameDiv = clonedBlock.querySelector('.name');
-        if (nameDiv) {
-          nameDiv.style.width = '100%';
-          nameDiv.style.textAlign = 'center';
-          nameDiv.style.marginTop = '10px';
+        } else {
+          // Handle other types of content (images, links, videos)
+          // Prioritize image/visual content first
+          const cardContent = document.createElement('div');
+          cardContent.className = 'card__content';
+          
+          // Clone block content
+          const clonedBlock = block.cloneNode(true);
+          clonedBlock.style.display = 'block';
+          clonedBlock.style.width = '100%';
+          clonedBlock.style.height = 'auto';
+          clonedBlock.style.minHeight = 'auto';
+          clonedBlock.style.marginTop = '0';
+          clonedBlock.style.paddingTop = '0';
           
           // Add a "View in Full Screen" button for small screens
           const pdfUrl = nameDiv.querySelector('a')?.getAttribute('href');
