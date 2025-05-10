@@ -1968,11 +1968,29 @@ function createSidePanel() {
   }
 }
 
-// Function to close the side panel
+// Update closeSidePanel to reset marker selection
 function closeSidePanel() {
   const sidePanel = document.getElementById('side-panel');
   if (sidePanel) {
     sidePanel.style.right = '-100vw';
+    
+    // Reset all markers when closing the panel
+    mapMarkers.forEach((marker) => {
+      if (marker.userData.selected) {
+        marker.userData.selected = false;
+        marker.scale.copy(marker.userData.originalScale);
+        
+        // Hide selection ring
+        marker.children.forEach(child => {
+          if (child.userData && child.userData.type === 'selectionRing') {
+            child.material.opacity = 0.0;
+          }
+          if (child instanceof THREE.PointLight) {
+            child.intensity = 1.2;
+          }
+        });
+      }
+    });
   }
 }
 
