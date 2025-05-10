@@ -1820,7 +1820,7 @@ function showContentByType(contentType, buttonIndex) {
         cardInner.appendChild(cardContent);
       }
 
-      
+
       card.appendChild(cardInner);
       cardsContainer.appendChild(card);
     });
@@ -1845,6 +1845,60 @@ function showContentByType(contentType, buttonIndex) {
   if (contentBlocks.length > 1) {
     setupCardStackEffect();
   }
+}
+
+// Add function to highlight selected marker
+function highlightSelectedMarker(selectedIndex) {
+  mapMarkers.forEach((marker, index) => {
+    // Reset all markers
+    if (marker.userData.selected) {
+      marker.userData.selected = false;
+      marker.scale.copy(marker.userData.originalScale);
+      
+      // Hide selection ring
+      marker.children.forEach(child => {
+        if (child.userData && child.userData.type === 'selectionRing') {
+          child.material.opacity = 0.0;
+        }
+        if (child instanceof THREE.PointLight) {
+          child.intensity = 1.2;
+        }
+      });
+    }
+    
+    // Highlight the selected marker
+    if (index === selectedIndex) {
+      marker.userData.selected = true;
+      marker.userData.originalScale = marker.scale.clone();
+      marker.scale.set(1.3, 1.3, 1.3);
+      
+      // Show selection ring
+      marker.children.forEach(child => {
+        if (child.userData && child.userData.type === 'selectionRing') {
+          child.material.opacity = 0.8;
+          child.material.color.setHex(parseInt(marker.userData.color, 10));
+          
+          // Add pulse animation
+          if (!child.userData.animation) {
+            child.userData.animation = true;
+            const pulseAnimation = () => {
+              if (marker.userData.selected) {
+                child.rotation.y += 0.02;
+                requestAnimationFrame(pulseAnimation);
+              } else {
+                child.userData.animation = false;
+              }
+            };
+            pulseAnimation();
+          }
+        }
+        
+        if (child instanceof THREE.PointLight) {
+          child.intensity = 2.0;
+        }
+      });
+    }
+  });
 }
 
 // Create side panel structure
