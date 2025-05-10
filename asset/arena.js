@@ -577,6 +577,9 @@ camera.position.set(0, 10000, -20000 );
 scene.add(camera);
 
 controls = new THREE.OrbitControls(camera, renderer.domElement);
+//Make the map rotate more slowly
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.3;
 controls.autoRotate = true;
 createGroundPlane();
 createTopLevelButtons();
