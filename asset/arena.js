@@ -231,13 +231,15 @@ class App {
   }
 
   createSqwigFromMouse(position) {
+    //If there was no mouse position before (indicating it was the first time to move the mouse), it will directly return and not be generated
       if(!this.lastMousePosition) return;
-      
+      //First, set the minimum number of curve segments to 4, and then see whether the mouse moves more horizontally or vertically this time
       let sections = 4;
       let newDirection = {x: 0, y: 0};
       let xAmount = Math.abs(this.lastMousePosition.x - position.x);
       let yAmount = Math.abs(this.lastMousePosition.y - position.y);
 
+      //Determine the direction of mouse movement. If it is mainly horizontal, set the x direction to 1 (right) or -1 (left); Otherwise, set the y direction
       if(xAmount > yAmount) {
           newDirection.x = this.lastMousePosition.x - position.x < 0 ? 1 : -1;
           sections += Math.round(xAmount/4);
@@ -246,6 +248,7 @@ class App {
           sections += Math.round(yAmount/4);
       }
       
+      //Create a configuration object that records the starting point coordinates, directions, and up to 20 segments of curves
       let settings = {
           x: this.lastMousePosition.x,
           y: this.lastMousePosition.y,
@@ -254,10 +257,11 @@ class App {
           sections: Math.min(sections, 20)
       };
       
+      //Create a new curve with these Settings and add it to the array of all curves. This Squiggle is a class responsible for drawing and updating SVG curves
       let newSqwig = new Squiggle(this.svg, settings, 10 + Math.random() * (sections * 1.5));
       this.squiggles.push(newSqwig);
   }
-
+//Each time the window size changes, update the size of the SVG to match the current container to prevent the canvas from deforming or overextending
   onResize() {
       this.width = this.container.offsetWidth;
       this.height = this.container.offsetHeight;
@@ -265,6 +269,11 @@ class App {
       this.svg.setAttribute('height', this.height);
   }
 
+  //This is a loop animation updater: 
+//Each curve will be checked in every frame. 
+//Update if it hasn't ended yet; 
+//If it is over, remove it from the array. 
+//Then recursively call itself using requestAnimationFrame to form a continuous animation.
   tick() {
       let step = this.squiggles.length - 1;
       while(step >= 0) {
@@ -664,10 +673,14 @@ request.onerror = function() {
 request.send();
 }
 
+//This function enables the 3D scene to automatically adjust when the size of the browser window changes
 function onWindowResize( event ) {
+  //Regain the current width and height of the browser
 SCREEN_HEIGHT = window.innerHeight;
 SCREEN_WIDTH  = window.innerWidth;
+//Make the canvas of the renderer become larger or smaller as well
 renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+//The "aspect ratio" of the camera also needs to be updated accordingly; otherwise, the picture will be distorted. After the update is completed, call updateProjectionMatrix() to recalculate the perspective
 camera.aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
 camera.updateProjectionMatrix();
 }
@@ -899,6 +912,7 @@ removed.forEach((cell) => {
 }
 //------------------------------------------------------------------------
 
+//It is used to draw "block paths" of different shapes on Canvas, and is usually used for maze generation, path visualization or grid pattern animation
 function drawSquare(kx, ky, kind) {
 let x0 = (kx + 0.5) * size; // center of square
 let y0 = offsY + (ky + 0.5) * size;
