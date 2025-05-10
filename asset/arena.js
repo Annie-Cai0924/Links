@@ -1735,30 +1735,31 @@ function showContentByType(contentType, buttonIndex) {
           clonedBlock.style.marginTop = '0';
           clonedBlock.style.paddingTop = '0';
           
-          // Add a "View in Full Screen" button for small screens
-          const pdfUrl = nameDiv.querySelector('a')?.getAttribute('href');
-          if (pdfUrl) {
-            const viewFullScreenBtn = document.createElement('a');
-            viewFullScreenBtn.href = pdfUrl;
-            viewFullScreenBtn.target = '_blank';
-            viewFullScreenBtn.textContent = 'View in Full Screen';
-            viewFullScreenBtn.style.cssText = `
-              display: inline-block;
-              margin: ${isMobile ? '5px auto' : '10px auto'};
-              padding: ${isMobile ? '6px 12px' : '8px 16px'};
-              background-color: #4CAF50;
-              color: white;
-              text-decoration: none;
-              border-radius: 4px;
-              font-weight: bold;
-              text-align: center;
-              margin-left: 10px;
-              font-size: ${isMobile ? '14px' : '16px'};
-            `;
-            nameDiv.appendChild(viewFullScreenBtn);
-          }
+        // Extract & prioritize visual elements
+        const visualElements = clonedBlock.querySelectorAll('img, video, iframe, embed');
+        const visualContainer = document.createElement('div');
+        visualContainer.className = 'visual-container';
+        
+        // Move all visual elements to the top
+        visualElements.forEach(el => {
+          const clone = el.cloneNode(true);
+          clone.style.maxWidth = '100%';
+          clone.style.maxHeight = isMobile ? '50vh' : '60vh';
+          clone.style.objectFit = 'contain';
+          clone.style.margin = '0 auto 20px';
+          clone.style.display = 'block';
+          visualContainer.appendChild(clone);
+        });
+        
+        // Add card number indicator for multiple cards
+        if (contentBlocks.length > 1) {
+          const cardIndicator = document.createElement('div');
+          cardIndicator.className = 'card-indicator';
+          cardIndicator.textContent = `${index + 1}/${contentBlocks.length}`;
+          cardInner.appendChild(cardIndicator);
         }
-      } else if (buttonIndex === 2) { // Links
+        
+        else if (buttonIndex === 2) { // Links
         // Enhance link display
         const linkElements = clonedBlock.querySelectorAll('a');
         linkElements.forEach(link => {
