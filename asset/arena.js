@@ -1990,7 +1990,7 @@ function closeSidePanel() {
   const sidePanel = document.getElementById('side-panel');
   if (sidePanel) {
     sidePanel.style.right = '-100vw';
-    
+
     // Reset all markers when closing the panel
     mapMarkers.forEach((marker) => {
       if (marker.userData.selected) {
