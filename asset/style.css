@@ -693,6 +693,8 @@ select:focus{
     align-items: center;
     width: 100%;
     overflow: visible ;
+    height: 400px; 
+    position: relative;
 }
 
 /* Make sure content type buttons are visible */
@@ -900,7 +902,7 @@ select:focus{
     /* Center map on mobile */
     #viewport canvas {
         width: 100vw ;
-        height: 40vh ;
+        height: 350px;
         margin: 0 auto;
     }
     
@@ -1024,6 +1026,8 @@ select:focus{
         display: flex;
         justify-content: center;
         align-items: center;
+        height: 300px;
+        margin-bottom: 20px;
     }
 }
 
