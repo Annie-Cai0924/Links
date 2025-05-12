@@ -546,7 +546,7 @@ function init() {
   baseURL = 'https://s3.ca-central-1.amazonaws.com/kevinnewcombe/three-terrain/';
 // set up the scene and camera
 scene = new THREE.Scene();
-var WIDTH = window.innerWidth > 768 ? window.innerWidth * 0.8 : window.innerWidth,
+var WIDTH = window.innerWidth * 0.8,
   HEIGHT = window.innerHeight;
 
 viewport = document.getElementById('viewport');
@@ -680,7 +680,7 @@ request.send();
 function onWindowResize( event ) {
   //Regain the current width and height of the browser
 SCREEN_HEIGHT = window.innerHeight;
-SCREEN_WIDTH = window.innerWidth > 768 ? window.innerWidth * 0.8 : window.innerWidth;
+SCREEN_WIDTH  = window.innerWidth;
 //Make the canvas of the renderer become larger or smaller as well
 renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
 //The "aspect ratio" of the camera also needs to be updated accordingly; otherwise, the picture will be distorted. After the update is completed, call updateProjectionMatrix() to recalculate the perspective
